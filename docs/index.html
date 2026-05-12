@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="/RugProof/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rugproof — rugproof your code before someone else does</title>
+<meta name="description" content="Rugproof is a Claude Code plugin: full smart-contract security auditor with vulnerability detection, exploit PoC generation, mainnet-fork simulation, and shareable audit cards. Solidity, Vyper, EVM, all major chains.">
+<meta property="og:title" content="Rugproof — Smart Contract Security Auditor">
+<meta property="og:description" content="A Claude Code plugin: vuln detection, exploit PoCs, mainnet-fork sims, shareable audit cards. Solidity, Vyper, every EVM chain.">
+<meta property="og:image" content="assets/og.png">
+<meta property="og:url" content="https://omermaksutii.github.io/RugProof">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="assets/og.png">
+<meta name="twitter:site" content="@rugproof_dev">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="hero">
+  <nav class="nav">
+    <span class="logo">RUGPROOF</span>
+    <span class="nav-links">
+      <a href="#features">features</a>
+      <a href="#install">install</a>
+      <a href="gallery/">gallery</a>
+      <a href="docs/">docs</a>
+      <a class="github" href="https://github.com/omermaksutii/RugProof">github →</a>
+    </span>
+  </nav>
+
+  <div class="hero-content">
+    <h1>Rugproof your code<br><span class="accent">before someone else does.</span></h1>
+    <p class="lede">A Claude Code plugin that turns your editor into a full-stack smart contract security auditor.</p>
+
+    <pre class="install"><code>$ claude plugin install rugproof
+$ /audit src/Vault.sol</code></pre>
+
+    <div class="badges">
+      <span class="badge">Solidity</span>
+      <span class="badge">Vyper</span>
+      <span class="badge">Foundry</span>
+      <span class="badge">Hardhat</span>
+      <span class="badge accent">Berachain</span>
+      <span class="badge">+9 EVM chains</span>
+    </div>
+  </div>
+
+  <div class="hero-card">
+    <img src="assets/sample-card.png" alt="A sample Rugproof audit card showing grade F">
+  </div>
+</header>
+
+<section id="features" class="features">
+  <h2>What's in the box</h2>
+
+  <div class="grid">
+    <div class="card">
+      <h3>33 slash commands</h3>
+      <p>From <code>/audit</code> and <code>/quick-scan</code> to <code>/exploit</code>, <code>/audit-live</code>, <code>/replay-incident</code>, <code>/invariant</code>, and <code>/card</code>. Every command is real prompt content backed by Foundry, Anvil, and the Etherscan family.</p>
+    </div>
+
+    <div class="card">
+      <h3>31 vulnerability skills</h3>
+      <p>Auto-loaded detection patterns. Reentrancy (incl. read-only), oracle manipulation, flash-loan attacks, MEV, signature replay, ERC-4337 AA, cross-chain messaging, ERC-7683 intents, EigenLayer restaking, ERC-4626 inflation, and 21 more.</p>
+    </div>
+
+    <div class="card">
+      <h3>19 specialist agents</h3>
+      <p>An <code>attacker</code> red team and <code>defender</code> blue team. Plus AMM, lending, staking, bridge, governance, vault, NFT, AA, cross-chain messaging, restaking, and intents specialists.</p>
+    </div>
+
+    <div class="card">
+      <h3>9 MCP servers</h3>
+      <p>block-explorer · forge-runner · hardhat-runner · anvil · tenderly · c4-history · sherlock-history · gas-tracker · token-metadata. Real chain I/O, not mocks.</p>
+    </div>
+
+    <div class="card">
+      <h3>Working PoCs</h3>
+      <p><code>/exploit &lt;finding&gt;</code> writes a Foundry test that proves the bug — and re-runs until it passes. No theoretical findings; every Critical comes with a smoking gun.</p>
+    </div>
+
+    <div class="card">
+      <h3>Shareable audit cards</h3>
+      <p>Every audit produces a 1200×1200 PNG card with the grade, severity counts, and top finding. Built for tweets, threads, and PR comments.</p>
+    </div>
+
+    <div class="card">
+      <h3>GitHub Action</h3>
+      <p>Drop <code>uses: omermaksutii/RugProof-action@v1</code> into a workflow. Audits every PR, posts findings as a sticky comment, blocks merge on Critical.</p>
+    </div>
+
+    <div class="card">
+      <h3>Soulbound NFT certificates</h3>
+      <p>Optional: mint your audit grade as a soulbound NFT on Berachain. Permanent, on-chain proof of audit. Cosmetic — but undeniable.</p>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="install-section">
+  <h2>Install</h2>
+  <pre><code># In Claude Code:
+/plugin marketplace add omermaksutii/RugProof
+/plugin install rugproof
+/rugproof-init                # 60-second setup
+/audit examples/VulnerableVault.sol   # see it work on a planted-vuln demo</code></pre>
+
+  <p class="muted">Local dev:</p>
+  <pre><code>git clone https://github.com/omermaksutii/RugProof ~/.claude/plugins/rugproof
+cd ~/.claude/plugins/rugproof/mcp && npm install && npm run build</code></pre>
+
+  <h3>GitHub Action</h3>
+  <pre><code>jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: omermaksutii/RugProof-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          threshold: high</code></pre>
+</section>
+
+<section class="cta">
+  <h2>See real audits</h2>
+  <p>The bundled <code>examples/</code> contracts are intentionally vulnerable. Here are the audits Rugproof produces on each:</p>
+  <ul class="sample-list">
+    <li><a href="docs/sample-vulnerable-vault.html">VulnerableVault — reentrancy + access control</a></li>
+    <li><a href="docs/sample-spot-oracle-lending.html">SpotOracleLending — flash-loan oracle manip</a></li>
+    <li><a href="docs/sample-flash-loan-governance.html">FlashLoanGovernance — Beanstalk-style</a></li>
+    <li><a href="docs/sample-inflatable-4626.html">Inflatable4626 — vault donation attack</a></li>
+    <li><a href="docs/sample-replayable-bridge.html">ReplayableBridge — sig replay</a></li>
+  </ul>
+</section>
+
+<footer>
+  <p><strong>RUGPROOF</strong> — rugproof your code before someone else does.</p>
+  <p class="links">
+    <a href="https://github.com/omermaksutii/RugProof">github</a> ·
+    <a href="https://x.com/rugproof_dev">x</a> ·
+    <a href="docs/">docs</a> ·
+    <a href="gallery/">gallery</a>
+  </p>
+  <p class="muted">MIT licensed. Built on <a href="https://claude.com/claude-code">Claude Code</a> + Foundry. Launching on Berachain.</p>
+</footer>
+</body>
+</html>

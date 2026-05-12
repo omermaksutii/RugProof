@@ -1,0 +1,98 @@
+{
+  "name": "rugproof",
+  "version": "0.1.0",
+  "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
+  "author": {
+    "name": "Rugproof",
+    "url": "https://github.com/omermaksutii/RugProof"
+  },
+  "homepage": "https://omermaksutii.github.io/RugProof",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "audit",
+    "solidity",
+    "smart-contracts",
+    "defi",
+    "ethereum",
+    "berachain",
+    "evm",
+    "vulnerability"
+  ],
+  "mcpServers": {
+    "block-explorer": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/block-explorer-mcp/dist/index.js"],
+      "env": {
+        "ETHERSCAN_API_KEY": "${ETHERSCAN_API_KEY:-}",
+        "BERATRAIL_API_KEY": "${BERATRAIL_API_KEY:-}",
+        "ARBISCAN_API_KEY": "${ARBISCAN_API_KEY:-}",
+        "BASESCAN_API_KEY": "${BASESCAN_API_KEY:-}"
+      }
+    },
+    "forge-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/forge-runner-mcp/dist/index.js"]
+    },
+    "hardhat-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/hardhat-runner-mcp/dist/index.js"]
+    },
+    "anvil": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/anvil-mcp/dist/index.js"]
+    },
+    "tenderly": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/tenderly-mcp/dist/index.js"],
+      "env": {
+        "TENDERLY_ACCESS_KEY": "${TENDERLY_ACCESS_KEY:-}",
+        "TENDERLY_ACCOUNT": "${TENDERLY_ACCOUNT:-}",
+        "TENDERLY_PROJECT": "${TENDERLY_PROJECT:-}"
+      }
+    },
+    "c4-history": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/c4-history-mcp/dist/index.js"]
+    },
+    "sherlock-history": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/sherlock-history-mcp/dist/index.js"]
+    },
+    "gas-tracker": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/gas-tracker-mcp/dist/index.js"]
+    },
+    "token-metadata": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/token-metadata-mcp/dist/index.js"]
+    }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-deploy-check.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-test-coverage.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "_install_notes": {
+    "git_hooks": "pre-commit and pre-push hooks live in /hooks and are installed by /rugproof-init via symlinks into .git/hooks. They run outside Claude Code on git operations."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@rugproof/scripts",
+  "version": "0.1.0",
+  "description": "Rugproof tooling scripts: card render, report render, telemetry, update check.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "render-card": "node dist/render-card.js",
+    "render-report": "node dist/render-report.js",
+    "check-update": "node dist/check-update.js",
+    "report-crash": "node dist/report-crash.js",
+    "telemetry": "node dist/telemetry.js"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.8",
+    "sharp": "^0.33.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  }
+}

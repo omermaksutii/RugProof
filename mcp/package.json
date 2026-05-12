@@ -1,0 +1,26 @@
+{
+  "name": "@rugproof/mcp-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Workspace for Rugproof MCP servers",
+  "workspaces": [
+    "block-explorer-mcp",
+    "forge-runner-mcp",
+    "hardhat-runner-mcp",
+    "anvil-mcp",
+    "tenderly-mcp",
+    "c4-history-mcp",
+    "sherlock-history-mcp",
+    "gas-tracker-mcp",
+    "token-metadata-mcp"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "build:all": "npm run build --workspaces",
+    "clean": "rimraf */dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5",
+    "typescript": "^5.4.0"
+  }
+}

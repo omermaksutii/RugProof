@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="/RugProof/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rugproof docs</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+<header class="nav">
+  <span class="logo"><a href="index.html">RUGPROOF</a></span>
+  <span class="nav-links">
+    <a href="index.html#features">features</a>
+    <a href="index.html#install">install</a>
+    <a href="gallery/">gallery</a>
+    <a href="docs/" class="active">docs</a>
+    <a class="github" href="https://github.com/omermaksutii/RugProof">github →</a>
+  </span>
+</header>
+
+<main class="doc">
+  <h1>Docs</h1>
+  <p>Sample audit reports — see what Rugproof produces on real (intentionally vulnerable) contracts.</p>
+
+  <h2>Sample audits</h2>
+  <table>
+    <thead><tr><th>Contract</th><th>Vuln class</th><th>Grade</th></tr></thead>
+    <tbody>
+      <tr><td><a href="docs/sample-vulnerable-vault.html">VulnerableVault</a></td><td>reentrancy + access control</td><td>F</td></tr>
+      <tr><td><a href="docs/sample-spot-oracle-lending.html">SpotOracleLending</a></td><td>oracle manipulation + flash loan</td><td>F</td></tr>
+      <tr><td><a href="docs/sample-flash-loan-governance.html">FlashLoanGovernance</a></td><td>governance flash loan (Beanstalk-style)</td><td>F</td></tr>
+      <tr><td><a href="docs/sample-inflatable-4626.html">Inflatable4626</a></td><td>ERC-4626 donation/inflation</td><td>F</td></tr>
+      <tr><td><a href="docs/sample-replayable-bridge.html">ReplayableBridge</a></td><td>signature replay (cross-chain)</td><td>F</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Quick reference</h2>
+  <h3>Slash commands</h3>
+  <p>38 commands across audit, exploit, simulation, testing, output, workflow, and integration categories. See the full list in the <a href="https://github.com/omermaksutii/RugProof#what-s-in-the-box">README</a>.</p>
+
+  <h3>Skills</h3>
+  <p>33 auto-invoked vulnerability detection skills covering the full CWE/SWC catalog plus modern DeFi-specific patterns (ERC-4337 AA, cross-chain messaging, ERC-7683 intents, EigenLayer restaking, ERC-4626 inflation, Diamond / EIP-2535, Permit2, ERC-1271).</p>
+
+  <h3>Specialist subagents</h3>
+  <p>19 specialists. 8 functional (attacker, defender, exploit-poc-writer, invariant-writer, gas-optimizer, remediation-suggester, report-writer, assembly-auditor) and 11 protocol-specific (AMM, lending, staking, bridge, governance, vault, NFT, AA, cross-chain messaging, restaking, intents).</p>
+
+  <h3>MCP servers</h3>
+  <p>9 servers: block-explorer, forge-runner, hardhat-runner, anvil, tenderly, c4-history (real GitHub fetch w/ 24h cache), sherlock-history (same), gas-tracker, token-metadata.</p>
+
+  <h2>Configuration</h2>
+  <p>See <code>.rugproof.yml.example</code> in the repo for full config (severity thresholds, chains, hooks, caching, telemetry, privacy mode).</p>
+</main>
+
+<footer>
+  <p><strong>RUGPROOF</strong> — rugproof your code before someone else does.</p>
+  <p class="links"><a href="index.html">home</a> · <a href="gallery/">gallery</a> · <a href="https://github.com/omermaksutii/RugProof">github</a></p>
+</footer>
+</body>
+</html>
