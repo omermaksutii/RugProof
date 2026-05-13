@@ -20,7 +20,7 @@
     "test-mcp":        "node dist/test-mcp.js"
   },
   "dependencies": {
-    "@noble/curves": "^1.4.0",
+    "@noble/curves": "^2.2.0",
     "@noble/hashes": "^1.4.0",
     "handlebars":    "^4.7.8",
     "sharp":         "^0.33.0"
