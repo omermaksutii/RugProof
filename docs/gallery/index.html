@@ -4,79 +4,105 @@
 <base href="/RugProof/">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rugproof Gallery — community audit cards</title>
+<title>Audit Gallery — Rugproof</title>
+<meta name="theme-color" content="#0a0904">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/gallery.css">
 </head>
 <body>
-<header class="nav">
-  <span class="logo"><a href="index.html">RUGPROOF</a></span>
-  <span class="nav-links">
-    <a href="index.html#features">features</a>
-    <a href="index.html#install">install</a>
-    <a href="gallery/" class="active">gallery</a>
-    <a href="docs/">docs</a>
-    <a class="github" href="https://github.com/omermaksutii/RugProof">github →</a>
-  </span>
-</header>
+<div class="bg-honeycomb"></div>
+<div class="bg-grain"></div>
 
-<main class="gallery">
-  <h1>Audit gallery</h1>
-  <p class="lede">Public audit cards submitted by the community. Each links to the full report.</p>
-
-  <div class="filters">
-    <button class="filter active" data-filter="all">All</button>
-    <button class="filter" data-filter="A">A grade</button>
-    <button class="filter" data-filter="B">B grade</button>
-    <button class="filter" data-filter="critical">Has Critical</button>
-    <button class="filter" data-filter="recent">Last 7 days</button>
-  </div>
-
-  <div class="cards-grid">
-    <a class="gallery-card" data-grade="F" data-critical="true" href="docs/sample-vulnerable-vault.html">
-      <img src="assets/sample-card.png" alt="VulnerableVault — Grade F">
-      <div class="meta"><span class="title">VulnerableVault</span><span class="date">2026-05-13</span></div>
-    </a>
-    <a class="gallery-card" data-grade="F" data-critical="true" href="docs/sample-spot-oracle-lending.html">
-      <img src="assets/card-spot-oracle.png" alt="SpotOracleLending — Grade F">
-      <div class="meta"><span class="title">SpotOracleLending</span><span class="date">2026-05-13</span></div>
-    </a>
-    <a class="gallery-card" data-grade="F" data-critical="true" href="docs/sample-flash-loan-governance.html">
-      <img src="assets/card-flash-loan-gov.png" alt="FlashLoanGovernance — Grade F">
-      <div class="meta"><span class="title">FlashLoanGovernance</span><span class="date">2026-05-13</span></div>
-    </a>
-    <a class="gallery-card" data-grade="F" data-critical="true" href="docs/sample-inflatable-4626.html">
-      <img src="assets/card-inflatable.png" alt="Inflatable4626 — Grade F">
-      <div class="meta"><span class="title">Inflatable4626</span><span class="date">2026-05-13</span></div>
-    </a>
-    <a class="gallery-card" data-grade="F" data-critical="true" href="docs/sample-replayable-bridge.html">
-      <img src="assets/card-replayable-bridge.png" alt="ReplayableBridge — Grade F">
-      <div class="meta"><span class="title">ReplayableBridge</span><span class="date">2026-05-13</span></div>
-    </a>
-
-    <div class="placeholder">
-      <p>Submit your audit. Run <code>/card --share gallery</code> after <code>/audit</code>.</p>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="index.html"><span class="logo-mark"></span>RUGPROOF</a>
+    <div class="nav-links">
+      <a href="index.html#features">features</a>
+      <a href="index.html#stack">stack</a>
+      <a href="index.html#install">install</a>
+      <a href="gallery/" style="color: var(--honey);">gallery</a>
+      <a href="docs/">docs</a>
+      <a class="cta" href="https://github.com/omermaksutii/RugProof">github →</a>
     </div>
   </div>
-</main>
+</nav>
 
-<script>
-  // Simple client-side filter
-  document.querySelectorAll('.filter').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const f = btn.dataset.filter;
-      document.querySelectorAll('.gallery-card').forEach(card => {
-        let show = true;
-        if (f === 'A') show = card.dataset.grade === 'A' || card.dataset.grade === 'A+';
-        else if (f === 'B') show = card.dataset.grade === 'B';
-        else if (f === 'critical') show = card.dataset.critical === 'true';
-        // 'recent' would require parsing dates; placeholder for now
-        card.style.display = show ? '' : 'none';
-      });
-    });
-  });
-</script>
+<section class="block" style="padding-top: 80px;">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>Audit <span class="it">gallery.</span></h2>
+      <p class="meta">
+        Public audit cards from the bundled demo contracts. Run <code>/card --share gallery</code>
+        after <code>/audit</code> to submit your own.
+      </p>
+    </div>
+
+    <div class="sample-grid reveal-stagger">
+
+      <a class="sample-card" href="docs/sample-vulnerable-vault.html">
+        <img src="assets/sample-card.png" alt="VulnerableVault — Grade F">
+        <div class="sample-card-meta">
+          <span class="name">VulnerableVault</span>
+          <span class="grade">F</span>
+        </div>
+      </a>
+
+      <a class="sample-card" href="docs/sample-spot-oracle-lending.html">
+        <img src="assets/card-spot-oracle.png" alt="SpotOracleLending — Grade F">
+        <div class="sample-card-meta">
+          <span class="name">SpotOracleLending</span>
+          <span class="grade">F</span>
+        </div>
+      </a>
+
+      <a class="sample-card" href="docs/sample-flash-loan-governance.html">
+        <img src="assets/card-flash-loan-gov.png" alt="FlashLoanGovernance — Grade F">
+        <div class="sample-card-meta">
+          <span class="name">FlashLoanGovernance</span>
+          <span class="grade">F</span>
+        </div>
+      </a>
+
+      <a class="sample-card" href="docs/sample-inflatable-4626.html">
+        <img src="assets/card-inflatable.png" alt="Inflatable4626 — Grade F">
+        <div class="sample-card-meta">
+          <span class="name">Inflatable4626</span>
+          <span class="grade">F</span>
+        </div>
+      </a>
+
+      <a class="sample-card" href="docs/sample-replayable-bridge.html">
+        <img src="assets/card-replayable-bridge.png" alt="ReplayableBridge — Grade F">
+        <div class="sample-card-meta">
+          <span class="name">ReplayableBridge</span>
+          <span class="grade">F</span>
+        </div>
+      </a>
+
+      <div class="sample-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; background: var(--bg-2); border-style: dashed;">
+        <div class="display-italic" style="font-size: 32px; color: var(--honey); margin-bottom: 12px;">+ submit yours</div>
+        <p style="font-family: var(--mono); font-size: 12px; color: var(--text-dim); line-height: 1.55;">
+          Run <code style="color: var(--honey)">/audit</code> then<br>
+          <code style="color: var(--honey)">/card --share gallery</code>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-bottom">
+      <a href="index.html" style="color: var(--text-mid); text-decoration: none;">← back to home</a>
+      <span>v0.1.0</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/animations.js"></script>
 </body>
 </html>

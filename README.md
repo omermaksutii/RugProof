@@ -2,21 +2,41 @@
 
 > Rugproof your code before someone else does.
 
-A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, and shareable audit reports — covering Solidity, Vyper, and Rust contracts across every major EVM chain.
+🌐 **Live site:** [omermaksutii.github.io/RugProof](https://omermaksutii.github.io/RugProof/)
+📦 **Latest:** [v0.1.0](https://github.com/omermaksutii/RugProof/releases/tag/v0.1.0)
+
+A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, working exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, soulbound on-chain audit certificates, and shareable audit cards — Solidity + Vyper across every major EVM chain.
 
 ## Install
+
+### From this GitHub source (works today)
 
 ```bash
 # In Claude Code:
 /plugin marketplace add omermaksutii/RugProof
+/plugin install rugproof@omermaksutii-RugProof
+/rugproof-init                              # 60-second setup
+/audit examples/VulnerableVault.sol         # try it on the bundled vulnerable demo
+```
+
+### From the official Anthropic marketplace
+
+Pending review. Once listed at [claude.com/plugins](https://claude.com/plugins):
+
+```bash
 /plugin install rugproof
 ```
 
-Or for local development:
+Submit your own plugin at [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit) or [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit).
+
+### Local dev
 
 ```bash
-git clone https://github.com/omermaksutii/RugProof ~/.claude/plugins/rugproof
-cd ~/.claude/plugins/rugproof && npm install && npm run build:mcp
+git clone https://github.com/omermaksutii/RugProof
+cd RugProof
+make build       # MCP servers + scripts
+make test        # forge tests + NFT tests + MCP smoke test
+make audit-demo  # runs the bundled reentrancy exploit (passes)
 ```
 
 ## Quickstart
