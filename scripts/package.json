@@ -23,7 +23,7 @@
     "@noble/curves": "^1.4.0",
     "@noble/hashes": "^1.4.0",
     "handlebars":    "^4.7.8",
-    "sharp":         "^0.33.0"
+    "sharp":         "^0.34.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
