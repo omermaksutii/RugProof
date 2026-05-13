@@ -19,6 +19,15 @@ out = "out-nft"
 libs = ["lib"]
 solc = "0.8.24"
 
+# Vyper demo profile — requires `vyper` installed.
+# Run: FOUNDRY_PROFILE=vyper forge build
+# Vyper sources live in examples-vyper/ at repo root (kept OUTSIDE src=examples to avoid
+# default profile auto-detecting .vy files when Vyper isn't installed).
+[profile.vyper]
+src = "examples-vyper"
+out = "out-vyper"
+libs = ["lib"]
+
 [fmt]
 line_length = 120
 tab_width = 4

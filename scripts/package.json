@@ -1,22 +1,32 @@
 {
   "name": "@rugproof/scripts",
   "version": "0.1.0",
-  "description": "Rugproof tooling scripts: card render, report render, telemetry, update check.",
+  "description": "Rugproof tooling scripts: card + report rendering, notifications, signers, parsers, telemetry.",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "render-card": "node dist/render-card.js",
-    "render-report": "node dist/render-report.js",
-    "check-update": "node dist/check-update.js",
-    "report-crash": "node dist/report-crash.js",
-    "telemetry": "node dist/telemetry.js"
+    "render-card":     "node dist/render-card.js",
+    "render-report":   "node dist/render-report.js",
+    "md-to-html":      "node dist/md-to-html.js",
+    "notify-slack":    "node dist/notify-slack.js",
+    "notify-discord":  "node dist/notify-discord.js",
+    "tweet":           "node dist/tweet.js",
+    "parse-slither":   "node dist/parse-slither.js",
+    "parse-mythril":   "node dist/parse-mythril.js",
+    "sign-cert":       "node dist/sign-cert.js",
+    "check-update":    "node dist/check-update.js",
+    "report-crash":    "node dist/report-crash.js",
+    "telemetry":       "node dist/telemetry.js",
+    "test-mcp":        "node dist/test-mcp.js"
   },
   "dependencies": {
-    "handlebars": "^4.7.8",
-    "sharp": "^0.33.0"
+    "@noble/curves": "^1.4.0",
+    "@noble/hashes": "^1.4.0",
+    "handlebars":    "^4.7.8",
+    "sharp":         "^0.33.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "typescript": "^5.4.0"
+    "typescript":  "^5.4.0"
   }
 }

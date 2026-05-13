@@ -1,0 +1,39 @@
+{
+  "name": "rugproof",
+  "owner": {
+    "name": "Omer Maksuti",
+    "email": "omermaksutiofficial@gmail.com",
+    "url": "https://github.com/omermaksutii"
+  },
+  "description": "Smart contract security auditor for Claude Code — vuln detection, exploit PoCs, mainnet-fork sims, shareable audit cards, on-chain audit certificates.",
+  "plugins": [
+    {
+      "name": "rugproof",
+      "source": "./",
+      "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Omer Maksuti",
+        "url": "https://github.com/omermaksutii/RugProof"
+      },
+      "homepage": "https://omermaksutii.github.io/RugProof",
+      "repository": "https://github.com/omermaksutii/RugProof",
+      "license": "MIT",
+      "category": "security",
+      "keywords": [
+        "security",
+        "audit",
+        "solidity",
+        "vyper",
+        "smart-contracts",
+        "defi",
+        "ethereum",
+        "berachain",
+        "evm",
+        "vulnerability",
+        "foundry",
+        "hardhat"
+      ]
+    }
+  ]
+}

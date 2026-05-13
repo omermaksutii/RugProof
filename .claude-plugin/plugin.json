@@ -24,10 +24,10 @@
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/block-explorer-mcp/dist/index.js"],
       "env": {
-        "ETHERSCAN_API_KEY": "${ETHERSCAN_API_KEY:-}",
-        "BERATRAIL_API_KEY": "${BERATRAIL_API_KEY:-}",
-        "ARBISCAN_API_KEY": "${ARBISCAN_API_KEY:-}",
-        "BASESCAN_API_KEY": "${BASESCAN_API_KEY:-}"
+        "ETHERSCAN_API_KEY": "${ETHERSCAN_API_KEY}",
+        "BERATRAIL_API_KEY": "${BERATRAIL_API_KEY}",
+        "ARBISCAN_API_KEY": "${ARBISCAN_API_KEY}",
+        "BASESCAN_API_KEY": "${BASESCAN_API_KEY}"
       }
     },
     "forge-runner": {
@@ -46,9 +46,9 @@
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/tenderly-mcp/dist/index.js"],
       "env": {
-        "TENDERLY_ACCESS_KEY": "${TENDERLY_ACCESS_KEY:-}",
-        "TENDERLY_ACCOUNT": "${TENDERLY_ACCOUNT:-}",
-        "TENDERLY_PROJECT": "${TENDERLY_PROJECT:-}"
+        "TENDERLY_ACCESS_KEY": "${TENDERLY_ACCESS_KEY}",
+        "TENDERLY_ACCOUNT": "${TENDERLY_ACCOUNT}",
+        "TENDERLY_PROJECT": "${TENDERLY_PROJECT}"
       }
     },
     "c4-history": {
