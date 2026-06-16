@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && node --test \"test/**/*.test.mjs\"",
-    "test:only": "node --test \"test/**/*.test.mjs\"",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:only": "node --test test/*.test.mjs",
     "render-card": "node dist/render-card.js",
     "render-report": "node dist/render-report.js",
     "md-to-html": "node dist/md-to-html.js",

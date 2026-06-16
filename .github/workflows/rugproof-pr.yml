@@ -32,7 +32,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -48,6 +48,9 @@ jobs:
         run: |
           npm install
           npm run build
+
+      - name: Fetch Solidity deps
+        run: bash scripts/ci-fetch-deps.sh
 
       - name: Forge build (sanity)
         # A PR that doesn't compile can't be meaningfully audited — surface it as
