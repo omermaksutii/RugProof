@@ -1,6 +1,6 @@
 {
   "name": "rugproof",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
   "author": {
     "name": "Rugproof",
