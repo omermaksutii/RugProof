@@ -12,7 +12,7 @@ interface IERC20 {
 
 contract ReplayableBridge {
     IERC20 public immutable token;
-    address public immutable relayer;        // off-chain signer
+    address public immutable relayer; // off-chain signer
 
     constructor(IERC20 _t, address _r) {
         token = _t;
@@ -23,8 +23,8 @@ contract ReplayableBridge {
     /// REPLAY-002 — Cross-chain replay: same signed payload accepted on any deployed chain.
     /// REPLAY-003 — `ecrecover` returns address(0) on bad sig; no `signer != address(0)` check.
     function withdraw(address recipient, uint256 amount, uint8 v, bytes32 r, bytes32 s) external {
-        bytes32 hash = keccak256(abi.encode(recipient, amount));   // ← no nonce, no chainId, no addr(this)
-        address signer = ecrecover(hash, v, r, s);                  // ← no zero-address check
+        bytes32 hash = keccak256(abi.encode(recipient, amount)); // ← no nonce, no chainId, no addr(this)
+        address signer = ecrecover(hash, v, r, s); // ← no zero-address check
         require(signer == relayer, "bad sig");
 
         require(token.transfer(recipient, amount), "xfer");

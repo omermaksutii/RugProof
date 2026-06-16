@@ -50,7 +50,12 @@ jobs:
           npm run build
 
       - name: Forge build (sanity)
-        run: forge build --sizes || echo "forge build failed; continuing"
+        # A PR that doesn't compile can't be meaningfully audited — surface it as
+        # a warning annotation but keep going so the audit comment still posts.
+        run: |
+          if ! forge build --sizes; then
+            echo "::warning::forge build failed — audit runs on un-compilable sources and may be incomplete"
+          fi
 
       - name: Run Rugproof on diff
         id: rugproof

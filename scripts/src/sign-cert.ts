@@ -28,6 +28,7 @@
 
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { keccak_256 } from "@noble/hashes/sha3";
+import { pathToFileURL } from "node:url";
 
 function parseArgs(argv: string[]): Record<string, string> {
   const out: Record<string, string> = {};
@@ -110,7 +111,7 @@ function concat(...arrs: Uint8Array[]): Uint8Array {
  *   [ipfs_len 32] [ipfs_data padded]
  *   [name_len 32] [name_data padded]
  */
-function buildDigestPreimage(
+export function buildDigestPreimage(
   chainId: bigint,
   certAddr: string,
   subject: string,
@@ -139,6 +140,74 @@ function buildDigestPreimage(
   );
 }
 
+export interface CertParams {
+  chainId: bigint;
+  certAddress: string;
+  subject: string;
+  reportHash: string;
+  ipfsCid: string;
+  targetName: string;
+  grade: number;
+  signerKey: string;
+}
+
+export interface SignedCert {
+  digest: string;
+  ethDigest: string;
+  issuerSig: string;
+  signerAddress: string;
+  args: {
+    chainId: string;
+    certAddress: string;
+    subject: string;
+    reportHash: string;
+    ipfsCid: string;
+    targetName: string;
+    grade: number;
+  };
+}
+
+/**
+ * Produce the issuer signature AuditCertificate.issue() will accept. Pure: no
+ * argv / env / process side effects, so it is unit-testable and reusable.
+ */
+export function signCertificate(p: CertParams): SignedCert {
+  if (p.grade < 0 || p.grade > 6) throw new Error("grade must be 0-6 (0=A+, 6=F)");
+
+  const preimage = buildDigestPreimage(
+    p.chainId, p.certAddress, p.subject, p.reportHash, p.ipfsCid, p.targetName, p.grade,
+  );
+  const digest = keccak_256(preimage);
+
+  // Ethereum Signed Message prefix (matches AuditCertificate.sol's recover())
+  const prefix = new TextEncoder().encode("\x19Ethereum Signed Message:\n32");
+  const ethDigest = keccak_256(concat(prefix, digest));
+
+  const privKey = hexToBytes(p.signerKey);
+  const sig = secp256k1.sign(ethDigest, privKey);
+  const sigBytes = sig.toCompactRawBytes();   // 64 bytes (r||s)
+  const v = sig.recovery !== undefined ? 27 + sig.recovery : 27;
+  const sig65 = new Uint8Array(65);
+  sig65.set(sigBytes, 0);
+  sig65[64] = v;
+
+  return {
+    digest: bytesToHex(digest),
+    ethDigest: bytesToHex(ethDigest),
+    issuerSig: bytesToHex(sig65),
+    signerAddress: signerAddrFromPrivKey(privKey),
+    args: {
+      chainId: p.chainId.toString(),
+      certAddress: p.certAddress,
+      subject: p.subject,
+      reportHash: p.reportHash,
+      ipfsCid: p.ipfsCid,
+      targetName: p.targetName,
+      grade: p.grade,
+    },
+  };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const required = ["chain-id", "cert-address", "subject", "report-hash", "ipfs-cid", "target-name", "grade"];
@@ -156,59 +225,32 @@ async function main() {
     process.exit(1);
   }
 
-  const chainId = BigInt(args["chain-id"]);
   const grade = parseInt(args.grade, 10);
   if (grade < 0 || grade > 6) {
     console.error("error: grade must be 0-6 (0=A+, 6=F)");
     process.exit(1);
   }
 
-  const preimage = buildDigestPreimage(
-    chainId,
-    args["cert-address"],
-    args.subject,
-    args["report-hash"],
-    args["ipfs-cid"],
-    args["target-name"],
+  const out = signCertificate({
+    chainId: BigInt(args["chain-id"]),
+    certAddress: args["cert-address"],
+    subject: args.subject,
+    reportHash: args["report-hash"],
+    ipfsCid: args["ipfs-cid"],
+    targetName: args["target-name"],
     grade,
-  );
-  const digest = keccak_256(preimage);
-
-  // Ethereum Signed Message prefix (matches AuditCertificate.sol's recover())
-  const prefix = new TextEncoder().encode("\x19Ethereum Signed Message:\n32");
-  const ethDigest = keccak_256(concat(prefix, digest));
-
-  // Sign with secp256k1
-  const privKey = hexToBytes(signerKey);
-  const sig = secp256k1.sign(ethDigest, privKey);
-  const sigBytes = sig.toCompactRawBytes();   // 64 bytes (r||s)
-  const v = sig.recovery !== undefined ? 27 + sig.recovery : 27;
-  const sig65 = new Uint8Array(65);
-  sig65.set(sigBytes, 0);
-  sig65[64] = v;
-
-  const out = {
-    digest: bytesToHex(digest),
-    ethDigest: bytesToHex(ethDigest),
-    issuerSig: bytesToHex(sig65),
-    signerAddress: signerAddrFromPrivKey(privKey),
-    args: {
-      chainId: args["chain-id"],
-      certAddress: args["cert-address"],
-      subject: args.subject,
-      reportHash: args["report-hash"],
-      ipfsCid: args["ipfs-cid"],
-      targetName: args["target-name"],
-      grade,
-    },
-  };
+    signerKey,
+  });
   console.log(JSON.stringify(out, null, 2));
 }
 
-function signerAddrFromPrivKey(privKey: Uint8Array): string {
+export function signerAddrFromPrivKey(privKey: Uint8Array): string {
   const pubKeyUncompressed = secp256k1.getPublicKey(privKey, false); // 65 bytes incl. 0x04 prefix
   const hash = keccak_256(pubKeyUncompressed.slice(1));
   return bytesToHex(hash.slice(12)).toLowerCase();
 }
 
-main().catch((err) => { console.error("sign-cert failed:", err); process.exit(1); });
+const isEntry = !!process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isEntry) {
+  main().catch((err) => { console.error("sign-cert failed:", err); process.exit(1); });
+}

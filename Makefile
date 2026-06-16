@@ -1,4 +1,5 @@
 .PHONY: help build build-mcp build-scripts test test-foundry test-nft test-mcp \
+        test-scripts test-mcp-unit test-mcp-smoke \
         sample-cards sample-html demo audit-demo render-card clean fmt
 
 DEFAULT_GOAL := help
@@ -14,7 +15,7 @@ build-mcp: ## Build all 9 MCP servers
 build-scripts: ## Build the scripts/ TypeScript bundle
 	cd scripts && npm install && npm run build
 
-test: test-foundry test-nft test-mcp ## Run all test suites
+test: test-foundry test-nft test-scripts test-mcp-unit test-mcp ## Run all test suites
 
 test-foundry: ## Run Foundry exploit tests against the demo contracts
 	forge test -vv
@@ -22,8 +23,16 @@ test-foundry: ## Run Foundry exploit tests against the demo contracts
 test-nft: ## Run AuditCertificate (soulbound NFT) tests
 	FOUNDRY_PROFILE=nft forge test -vv
 
+test-scripts: build-scripts ## Unit-test the parsers + cert signer (node:test)
+	cd scripts && npm run test:only
+
+test-mcp-unit: build-mcp ## Unit/integration-test the MCP servers offline (node:test)
+	cd mcp && npm run test:only
+
 test-mcp: ## MCP smoke test — JSON-RPC roundtrip against all servers
 	node scripts/dist/test-mcp.js
+
+test-mcp-smoke: test-mcp ## Alias for the MCP smoke test
 
 sample-cards: build-scripts ## Render PNG audit cards for the 5 demo contracts
 	@for pair in \
@@ -35,15 +44,15 @@ sample-cards: build-scripts ## Render PNG audit cards for the 5 demo contracts
 	    IFS=: read -r name in out <<< "$$pair"; \
 	    node scripts/dist/render-card.js --findings "$$in" --out "$$out"; \
 	done
-	cp samples/sample-card.png samples/card-*.png web/assets/
+	cp samples/sample-card.png samples/card-*.png docs/assets/
 
 sample-html: build-scripts ## Render the 5 sample audit reports as HTML pages
 	@for pair in \
-	  "audit-vulnerable-vault.md:web/docs/sample-vulnerable-vault.html" \
-	  "audit-spot-oracle-lending.md:web/docs/sample-spot-oracle-lending.html" \
-	  "audit-flash-loan-governance.md:web/docs/sample-flash-loan-governance.html" \
-	  "audit-inflatable-4626.md:web/docs/sample-inflatable-4626.html" \
-	  "audit-replayable-bridge.md:web/docs/sample-replayable-bridge.html"; do \
+	  "audit-vulnerable-vault.md:docs/docs/sample-vulnerable-vault.html" \
+	  "audit-spot-oracle-lending.md:docs/docs/sample-spot-oracle-lending.html" \
+	  "audit-flash-loan-governance.md:docs/docs/sample-flash-loan-governance.html" \
+	  "audit-inflatable-4626.md:docs/docs/sample-inflatable-4626.html" \
+	  "audit-replayable-bridge.md:docs/docs/sample-replayable-bridge.html"; do \
 	    IFS=: read -r src dst <<< "$$pair"; \
 	    node scripts/dist/md-to-html.js --in "samples/$$src" --out "$$dst"; \
 	done

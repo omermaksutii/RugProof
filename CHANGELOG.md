@@ -7,6 +7,30 @@ All notable changes to Rugproof will be documented here. Format: [Keep a Changel
 Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
 `docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
 
+### Phase 1 — tests & CI hardening
+
+- **Test suites** (zero new runtime deps, `node:test`, fully offline):
+  - `scripts/test/`: unit tests for the Slither/Mythril parsers (severity remap,
+    detector/SWC → vuln mapping, grading) and the EIP-712 cert signer (known-vector
+    address derivation, determinism, and a full ecrecover round-trip that matches
+    `AuditCertificate.sol`).
+  - `mcp/test/`: spawns each server over stdio and verifies tool listing plus an
+    offline (stub/in-memory) invocation — no keys or binaries required.
+  - `scripts/test/e2e-report.sh`: renders a PNG card + HTML report and validates
+    the card summary, exercising the full output pipeline.
+- Refactored `parse-slither` / `parse-mythril` / `sign-cert` to export their pure
+  logic behind an entry-guard so it is importable and testable.
+- Published `schemas/finding.schema.json` (the normalized report shape) and
+  validate parser output against it in tests.
+- `scripts/check-versions.mjs`: fails CI/release if any manifest version or the
+  CHANGELOG drift apart.
+- **CI** (`.github/workflows/ci.yml`): build + Foundry/NFT/script/MCP/e2e tests +
+  version-sync on every push/PR; `forge fmt --check` lint job; gitleaks secret scan.
+- `rugproof-pr.yml` no longer silently swallows `forge build` failures (now a
+  surfaced warning annotation); `release.yml` gates on version-sync and tag match.
+- `forge fmt` applied to the demo contracts; Makefile wired to the new test
+  targets and its stale `web/` paths corrected to `docs/`.
+
 ### Phase 0 — cleanup & bug fixes
 
 - **anvil-mcp**: replaced the fixed 1.5s post-spawn sleep with real RPC readiness

@@ -26,7 +26,7 @@ contract VulnerableVault {
         (bool ok,) = msg.sender.call{value: amt}("");
         require(ok, "send failed");
 
-        balance[msg.sender] = 0;       // ← effects after interaction → CEI violated
+        balance[msg.sender] = 0; // ← effects after interaction → CEI violated
     }
 
     /// ACCESS-001 — Missing onlyOwner; anyone can pause/unpause.
@@ -42,12 +42,12 @@ contract VulnerableVault {
 
     /// UNCHK-001 — Low-level call return ignored. Notify hook can silently fail.
     function notifyDepositor(address depositor, bytes calldata data) external {
-        depositor.call(data);          // ← return value not checked
+        depositor.call(data); // ← return value not checked
     }
 
     /// CENT-001 — Owner can immediately rotate to any address with no two-step / timelock.
     function transferOwnership(address newOwner) external {
         require(msg.sender == owner, "not owner");
-        owner = newOwner;              // ← no zero-address check; no two-step
+        owner = newOwner; // ← no zero-address check; no two-step
     }
 }

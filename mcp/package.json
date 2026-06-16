@@ -17,6 +17,8 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "build:all": "npm run build --workspaces",
+    "test": "npm run build && node --test \"test/**/*.test.mjs\"",
+    "test:only": "node --test \"test/**/*.test.mjs\"",
     "clean": "rimraf */dist"
   },
   "devDependencies": {

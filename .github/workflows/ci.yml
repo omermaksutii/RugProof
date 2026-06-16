@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build + test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Build MCP servers
+        working-directory: mcp
+        run: npm install && npm run build
+
+      - name: Build scripts
+        working-directory: scripts
+        run: npm install && npm run build
+
+      - name: Version sync check
+        run: node scripts/check-versions.mjs
+
+      - name: Forge build
+        run: forge build --sizes
+
+      - name: Foundry tests (exploit PoCs)
+        run: forge test -vv
+
+      - name: NFT certificate tests
+        run: FOUNDRY_PROFILE=nft forge test -vv
+
+      - name: Script unit tests
+        working-directory: scripts
+        run: npm run test:only
+
+      - name: MCP server tests (offline)
+        working-directory: mcp
+        run: npm run test:only
+
+      - name: MCP smoke test
+        run: node scripts/dist/test-mcp.js
+
+      - name: E2E report pipeline
+        run: bash scripts/test/e2e-report.sh
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: forge fmt check
+        run: forge fmt --check
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

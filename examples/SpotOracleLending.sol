@@ -18,14 +18,14 @@ interface IERC20 {
 }
 
 contract SpotOracleLending {
-    IPair public immutable pair;          // collateral / debt AMM pair
+    IPair public immutable pair; // collateral / debt AMM pair
     IERC20 public immutable collateral;
     IERC20 public immutable debt;
 
     mapping(address => uint256) public collateralOf;
     mapping(address => uint256) public debtOf;
 
-    uint256 public constant MIN_HEALTH = 1.5e18;   // 150% collateralization
+    uint256 public constant MIN_HEALTH = 1.5e18; // 150% collateralization
 
     constructor(IPair _pair) {
         pair = _pair;
@@ -36,7 +36,7 @@ contract SpotOracleLending {
     /// ORACLE-001 — Spot-price read from AMM. Flash-loan-manipulable in a single block.
     function _spotPrice() internal view returns (uint256) {
         (uint112 r0, uint112 r1,) = pair.getReserves();
-        return uint256(r1) * 1e18 / uint256(r0);   // debt-per-collateral
+        return uint256(r1) * 1e18 / uint256(r0); // debt-per-collateral
     }
 
     function deposit(uint256 amt) external {

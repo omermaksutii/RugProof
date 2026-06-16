@@ -9,6 +9,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 function parseArgs(argv: string[]): Record<string, string> {
   const out: Record<string, string> = {};
@@ -73,7 +74,7 @@ async function readInput(path?: string): Promise<any> {
   });
 }
 
-function normalize(slither: any) {
+export function normalize(slither: any) {
   const detectors = slither?.results?.detectors ?? [];
   const findings = detectors.map((d: any, idx: number) => {
     const sev = SLITHER_TO_RUGPROOF_SEVERITY[d.impact] ?? "Info";
@@ -121,7 +122,7 @@ function confidenceMap(c: string): string {
   return ({ High: "HIGH", Medium: "MEDIUM", Low: "LOW" } as Record<string, string>)[c] ?? "MEDIUM";
 }
 
-function pickGrade(c: Record<string, number>): string {
+export function pickGrade(c: Record<string, number>): string {
   if (c.critical > 0) return "F";
   if (c.high > 2) return "D";
   if (c.high > 0) return "C";
@@ -141,4 +142,7 @@ async function main() {
   }
 }
 
-main().catch((err) => { console.error("parse-slither failed:", err); process.exit(1); });
+const isEntry = !!process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isEntry) {
+  main().catch((err) => { console.error("parse-slither failed:", err); process.exit(1); });
+}

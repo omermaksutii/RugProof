@@ -29,14 +29,16 @@ contract FlashLoanGovernance {
     }
 
     function propose(address target, bytes calldata callData) external returns (uint256) {
-        proposals.push(Proposal({
-            target: target,
-            callData: callData,
-            forVotes: 0,
-            againstVotes: 0,
-            deadline: block.timestamp + 1,    // ← FLASH-001 — no voting delay
-            executed: false
-        }));
+        proposals.push(
+            Proposal({
+                target: target,
+                callData: callData,
+                forVotes: 0,
+                againstVotes: 0,
+                deadline: block.timestamp + 1, // ← FLASH-001 — no voting delay
+                executed: false
+            })
+        );
         return proposals.length - 1;
     }
 
@@ -46,7 +48,7 @@ contract FlashLoanGovernance {
         require(block.timestamp <= proposals[propId].deadline, "expired");
         require(!hasVoted[propId][msg.sender], "voted");
 
-        uint256 weight = govToken.balanceOf(msg.sender);   // ← spot balance
+        uint256 weight = govToken.balanceOf(msg.sender); // ← spot balance
         hasVoted[propId][msg.sender] = true;
 
         if (support) proposals[propId].forVotes += weight;
@@ -61,7 +63,7 @@ contract FlashLoanGovernance {
         require(p.forVotes > p.againstVotes, "rejected");
 
         p.executed = true;
-        (bool ok,) = p.target.call(p.callData);    // ← UNCHK-002 ignored return value
+        (bool ok,) = p.target.call(p.callData); // ← UNCHK-002 ignored return value
         require(ok, "exec failed");
     }
 }
