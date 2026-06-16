@@ -2,6 +2,22 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [0.5.0] — Unreleased
+
+Multi-language coverage & the property-fuzzing / symbolic toolchain.
+
+### Added
+
+- **New `fuzz-runner` MCP**: wraps Echidna, Medusa, and Halmos — runs the real
+  binary when installed, else a labeled sample. `is_available` reports presence.
+  Wired into `/fuzz`, `/symbolic`, and `/prover`. MCP count 11 → 12.
+- **3 non-EVM detection skills**: `stylus-rust` (Arbitrum Stylus storage aliasing,
+  panic-DoS, release-mode wrapping), `cosmwasm` (missing `info.sender` auth,
+  unbounded iteration, reply/migrate footguns), `solana-anchor` (signer/owner
+  checks, type cosplay, PDA bump, close-account drain). Skills 42 → 45.
+- README "Languages" updated: Stylus/CosmWasm/Solana-Anchor now have dedicated
+  skills (not just "top vuln classes").
+
 ## [0.4.0] — Unreleased
 
 Specialist depth, community rule packs, and an honest accuracy benchmark.

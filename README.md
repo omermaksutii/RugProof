@@ -3,7 +3,7 @@
 > Rugproof your code before someone else does.
 
 🌐 **Live site:** [omermaksutii.github.io/RugProof](https://omermaksutii.github.io/RugProof/)
-📦 **Latest:** v0.2.0 — 44 commands · 23 agents · 42 skills · 11 MCP servers, now with a real test suite and offline-first integrations
+📦 **Latest:** v0.5.0 — 44 commands · 23 agents · 45 skills · 12 MCP servers · tested, offline-first, with rule packs, an accuracy benchmark, and non-EVM coverage
 
 A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, working exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, soulbound on-chain audit certificates, and shareable audit cards — Solidity + Vyper across every major EVM chain.
 
@@ -76,7 +76,7 @@ make audit-demo  # runs the bundled reentrancy exploit (passes)
 
 **Language / chain / economics:** `vyper-specialist` (Vyper compiler-class bugs) · `l2-sequencer-specialist` (rollup finality, sequencer uptime, L1↔L2) · `economic-rug-specialist` (owner powers + 0–100 rugability score) · `zk-verifier-specialist` (proof-verifier correctness)
 
-### 42 auto-invoked vulnerability skills
+### 45 auto-invoked vulnerability skills
 
 A detection-skill library that auto-activates when Claude sees matching code patterns. Covers the full CWE/SWC catalog plus modern DeFi-specific issues:
 
@@ -90,9 +90,9 @@ A detection-skill library that auto-activates when Claude sees matching code pat
 
 **DX meta-skills (2):** caching-and-incremental (skip unchanged files) · progress-and-streaming (live status during long audits).
 
-### 11 MCP servers
+### 12 MCP servers
 
-Chain I/O, test runners, history databases, static-analyzer runners — `block-explorer` (Etherscan v2 multichain) · `forge-runner` · `hardhat-runner` · `anvil` · `tenderly` · `c4-history` · `sherlock-history` · `gas-tracker` · `token-metadata` (+ GoPlus safety) · `slither-runner` · `mythril-runner`. Every server degrades gracefully to labeled mock data offline, so the plugin works with zero configuration.
+Chain I/O, test runners, history databases, static-analyzer + fuzz runners — `block-explorer` (Etherscan v2 multichain, EIP-1967/1822 proxy resolution) · `forge-runner` · `hardhat-runner` · `anvil` · `tenderly` · `c4-history` · `sherlock-history` · `gas-tracker` · `token-metadata` (+ GoPlus safety) · `slither-runner` · `mythril-runner` · `fuzz-runner` (Echidna/Medusa/Halmos). Every server degrades gracefully to labeled mock data offline, so the plugin works with zero configuration.
 
 ### 4 hooks
 
@@ -127,7 +127,7 @@ function trustedOp() external onlyOwner { ... }
 
 **Chains:** Ethereum · Berachain · Arbitrum · Base · Optimism · Polygon · BSC · Linea · zkSync · Scroll
 
-**Languages:** Solidity (full) · Vyper (most patterns) · Stylus / CosmWasm / Solana-Anchor (top vuln classes) · Yul / inline assembly (specialist)
+**Languages:** Solidity (full) · Vyper (specialist + skill) · Stylus/Rust · CosmWasm · Solana-Anchor (dedicated skills for top vuln classes) · Yul / inline assembly (specialist)
 
 ## Output formats
 
@@ -147,8 +147,8 @@ RugProof/
 ├── .github/                          # workflows (pages, pr-audit, release) + action + templates
 ├── commands/                         # 44 slash commands (real prompts)
 ├── agents/                           # 23 subagents
-├── skills/                           # 42 auto-invoked detection skills
-├── mcp/                              # 11 MCP servers (TypeScript)
+├── skills/                           # 45 auto-invoked detection skills
+├── mcp/                              # 12 MCP servers (TypeScript)
 ├── scripts/                          # render-card · render-report · md-to-html · telemetry · …
 ├── hooks/                            # 4 hooks
 ├── templates/                        # report.md.hbs · report.html.hbs · audit-card.svg.hbs
@@ -170,7 +170,7 @@ RugProof/
 One-liner via Makefile:
 
 ```bash
-make build       # builds all 11 MCP servers + scripts
+make build       # builds all 12 MCP servers + scripts
 make test        # forge tests + NFT tests + MCP smoke test
 make audit-demo  # runs the bundled reentrancy exploit PoC (passes)
 make sample-cards   # rerender PNG audit cards from samples/
@@ -184,7 +184,7 @@ cd mcp && npm install && npm run build
 cd ../scripts && npm install && npm run build
 forge install                   # if you want to refresh git submodules
 forge test -vv                  # exploit PoC against VulnerableVault passes
-node scripts/dist/test-mcp.js   # MCP smoke test (11/11 servers should pass)
+node scripts/dist/test-mcp.js   # MCP smoke test (12/12 servers should pass)
 ```
 
 The plugin.json points to `mcp/<name>-mcp/dist/index.js` for each server. Most return mock data when API keys / external tools are absent so the plugin works out-of-the-box even without a fully configured environment.

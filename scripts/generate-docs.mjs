@@ -68,6 +68,7 @@ const mcp = [
   { name: "token-metadata", tools: ["get_token_metadata", "detect_quirks", "check_safety"], note: "ERC-20 metadata + quirks DB; check_safety via GoPlus with offline fallback." },
   { name: "slither-runner", tools: ["analyze", "is_available"], note: "Runs Slither if installed, else labeled sample for parse-slither." },
   { name: "mythril-runner", tools: ["analyze", "is_available"], note: "Runs Mythril if installed, else labeled sample for parse-mythril." },
+  { name: "fuzz-runner", tools: ["echidna", "medusa", "halmos", "is_available"], note: "Property-fuzz / symbolic runners; real binary if installed, else labeled sample." },
 ];
 
 // --- page shell ----------------------------------------------------------

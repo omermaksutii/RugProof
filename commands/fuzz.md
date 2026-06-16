@@ -1,12 +1,17 @@
 ---
 description: Generate property-based fuzz tests for a specific function.
 argument-hint: "<Contract.function>"
-allowed-tools: Read, Write, Bash, Agent, Skill, mcp__forge-runner__*
+allowed-tools: Read, Write, Bash, Agent, Skill, mcp__forge-runner__*, mcp__fuzz-runner__*
 ---
 
 # /fuzz — fuzz tests for one function
 
 Lighter than `/invariant` — targets a specific function with bounded random inputs.
+
+For deeper campaigns, drive the dedicated fuzzers via the `fuzz-runner` MCP —
+`mcp__fuzz-runner__echidna` (property fuzzing) or `mcp__fuzz-runner__medusa`
+(parallel, Go). Call `mcp__fuzz-runner__is_available` first; if a fuzzer isn't
+installed the tool returns a labeled sample so the flow still demonstrates.
 
 ## Procedure
 

@@ -1,12 +1,12 @@
 ---
 description: Symbolic execution via Halmos. For paths that fuzzing cannot reach.
 argument-hint: "<contract-or-function>"
-allowed-tools: Read, Write, Bash, Agent
+allowed-tools: Read, Write, Bash, Agent, mcp__fuzz-runner__*
 ---
 
 # /symbolic — symbolic execution
 
-Wraps [Halmos](https://github.com/a16z/halmos) — symbolic execution of Foundry tests. Use when fuzzing has plateaued and you need to prove a property.
+Wraps [Halmos](https://github.com/a16z/halmos) — symbolic execution of Foundry tests. Use when fuzzing has plateaued and you need to prove a property. Run it through `mcp__fuzz-runner__halmos` (offline-safe labeled sample if Halmos isn't installed).
 
 ## Prerequisites
 
