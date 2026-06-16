@@ -2,6 +2,23 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [1.0.1] — 2026-06-17
+
+Green-CI patch (no functional change to the plugin).
+
+### Fixed
+
+- CI `forge build` failed because `lib/` is gitignored and the `.gitmodules`
+  entries were never committed as gitlinks, so `submodules: recursive` fetched
+  nothing. Added `scripts/ci-fetch-deps.sh` (pins forge-std + OpenZeppelin to
+  known-good commits), called before every `forge build`.
+- Unit-test steps failed on CI's node 20 (`node --test` glob expansion needs
+  21+). Switched to a shell-expanded `test/*.test.mjs` glob and bumped CI to
+  node 22 to match local dev.
+- `live-analyzers` job pins Python 3.11 (3.12 drops `distutils`, breaking the
+  mythril install), makes mythril best-effort, and is `continue-on-error` so a
+  flaky external-tool install never gates the merge. **CI is now fully green.**
+
 ## [1.0.0] — 2026-06-17
 
 **Launch release.** The codebase is feature-complete, tested, documented, and

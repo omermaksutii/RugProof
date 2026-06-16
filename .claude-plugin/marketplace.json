@@ -11,7 +11,7 @@
       "name": "rugproof",
       "source": "./",
       "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Omer Maksuti",
         "url": "https://github.com/omermaksutii/RugProof"
