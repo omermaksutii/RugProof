@@ -33,7 +33,7 @@
 <main class="doc">
   <div class="eyebrow" style="margin-bottom: 16px;">/docs/commands</div>
   <h1>Slash <span style="font-style:italic;color:var(--honey)">commands.</span></h1>
-  <p>All 44 Rugproof commands, generated from source.</p>
+  <p>All 45 Rugproof commands, generated from source.</p>
   <h2>Which command?</h2>
   <pre class="tree">I want to…
 ├─ audit my whole repo ............... /audit            (deep: /audit-deep, paranoid: /audit-strict)
@@ -76,6 +76,7 @@
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/gas.md"><code>/gas</code></a></td><td><code>&lt;file-or-contract&gt;</code></td><td>Gas profile — find expensive operations and suggest optimizations with before/after numbers.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/invariant.md"><code>/invariant</code></a></td><td><code>&lt;contract-or-file&gt;</code></td><td>Generate Foundry invariant tests for property-based fuzzing. The high-value command for serious teams.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/mint-cert.md"><code>/mint-cert</code></a></td><td><code>[--chain berachain] [--ipfs-pin]</code></td><td>Mint a soulbound Audit Certificate NFT on Berachain (or other supported chain) for a completed audit.</td></tr>
+      <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/monitor.md"><code>/monitor</code></a></td><td><code>[address] [--chain ethereum]</code></td><td>Set up post-deployment monitoring — recommend which on-chain events to alert on and scan recent activity for high-severity changes.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/mythril.md"><code>/mythril</code></a></td><td><code>[file]</code></td><td>Run Mythril (symbolic execution) and have Claude triage its findings — turn symbolic counter-examples into Foundry PoCs.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/notify-discord.md"><code>/notify-discord</code></a></td><td><code>[--webhook-url &lt;url&gt;] [--severity-filter critical|high|medium]</code></td><td>Post the latest /audit results to a Discord channel via webhook.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/notify-slack.md"><code>/notify-slack</code></a></td><td><code>[--webhook-url &lt;url&gt;] [--severity-filter critical|high|medium]</code></td><td>Post the latest /audit results to a Slack channel via incoming webhook.</td></tr>

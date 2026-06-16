@@ -86,6 +86,11 @@ const SERVERS: Record<string, InvokeSpec> = {
     args: {},
     validate: (t) => (t.includes("result") || t.includes("stub")) ? null : 'expected halmos result/stub',
   },
+  "monitoring": {
+    tool: "suggest_monitors",
+    args: { hasOwner: true, hasProxy: true },
+    validate: (t) => t.includes("monitors") ? null : 'expected "monitors"',
+  },
 };
 
 interface JsonRpc {

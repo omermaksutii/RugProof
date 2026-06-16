@@ -101,6 +101,19 @@ const CASES = [
       assert.ok(Array.isArray(j.result?.results), "halmos sample has results");
     },
   },
+  {
+    name: "monitoring",
+    expectTools: ["suggest_monitors", "scan_recent"],
+    tool: "suggest_monitors",
+    args: { hasOwner: true, hasProxy: true, hasPause: true },
+    check: (j) => {
+      assert.ok(Array.isArray(j.monitors) && j.monitors.length > 0, "returns monitors");
+      const events = j.monitors.map((m) => m.event);
+      assert.ok(events.some((e) => e.startsWith("Upgraded")), "proxy → upgrade monitor");
+      assert.ok(events.some((e) => e.startsWith("OwnershipTransferred")), "owner → ownership monitor");
+      assert.ok(j.monitors.some((m) => m.severity === "critical"), "has a critical monitor");
+    },
+  },
 ];
 
 for (const c of CASES) {

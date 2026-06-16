@@ -1,7 +1,7 @@
 {
   "name": "@rugproof/mcp-workspace",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Workspace for Rugproof MCP servers",
   "workspaces": [
     "_shared",
@@ -16,7 +16,8 @@
     "token-metadata-mcp",
     "slither-runner-mcp",
     "mythril-runner-mcp",
-    "fuzz-runner-mcp"
+    "fuzz-runner-mcp",
+    "monitoring-mcp"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

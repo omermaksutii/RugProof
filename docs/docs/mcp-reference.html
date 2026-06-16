@@ -33,7 +33,7 @@
 <main class="doc">
   <div class="eyebrow" style="margin-bottom: 16px;">/docs/mcp</div>
   <h1>MCP <span style="font-style:italic;color:var(--honey)">servers.</span></h1>
-  <p>12 MCP servers. Every server degrades gracefully offline (labeled stub data) so the plugin works with zero configuration.</p>
+  <p>13 MCP servers. Every server degrades gracefully offline (labeled stub data) so the plugin works with zero configuration.</p>
   <table>
     <thead><tr><th>Server</th><th>Tools</th><th>Behaviour</th></tr></thead>
     <tbody>
@@ -49,6 +49,7 @@
       <tr><td><code>slither-runner</code></td><td><code>analyze</code> <code>is_available</code></td><td>Runs Slither if installed, else labeled sample for parse-slither.</td></tr>
       <tr><td><code>mythril-runner</code></td><td><code>analyze</code> <code>is_available</code></td><td>Runs Mythril if installed, else labeled sample for parse-mythril.</td></tr>
       <tr><td><code>fuzz-runner</code></td><td><code>echidna</code> <code>medusa</code> <code>halmos</code> <code>is_available</code></td><td>Property-fuzz / symbolic runners; real binary if installed, else labeled sample.</td></tr>
+      <tr><td><code>monitoring</code></td><td><code>suggest_monitors</code> <code>scan_recent</code></td><td>Post-deploy watch: recommend alert events for a contract; scan recent logs for upgrade/ownership/pause; offline sample.</td></tr>
     </tbody>
   </table>
 </main>

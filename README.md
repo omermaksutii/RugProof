@@ -3,7 +3,7 @@
 > Rugproof your code before someone else does.
 
 🌐 **Live site:** [omermaksutii.github.io/RugProof](https://omermaksutii.github.io/RugProof/)
-📦 **Latest:** v0.5.0 — 44 commands · 23 agents · 45 skills · 12 MCP servers · tested, offline-first, with rule packs, an accuracy benchmark, and non-EVM coverage
+📦 **Latest:** v0.6.0 — 45 commands · 23 agents · 45 skills · 13 MCP servers · tested, offline-first, with rule packs, a benchmark, non-EVM coverage, and post-deploy monitoring
 
 A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, working exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, soulbound on-chain audit certificates, and shareable audit cards — Solidity + Vyper across every major EVM chain.
 
@@ -53,14 +53,14 @@ make audit-demo  # runs the bundled reentrancy exploit (passes)
 
 ## What's in the box
 
-### 44 slash commands
+### 45 slash commands
 
 **Audit:** `/audit` `/audit-deep` `/audit-strict` `/audit-changes` `/audit-live` `/audit-history` `/audit-deps` `/audit-multi-chain` `/quick-scan` `/rug-check` `/score` `/explain`
 **Output:** `/report` `/card` `/remediate`
 **Exploit:** `/exploit` `/exploit-chain` `/exploit-live`
 **Simulation:** `/simulate` `/replay-incident`
 **Tests / proofs:** `/test-gen` `/invariant` `/fuzz` `/coverage` `/symbolic` `/prover`
-**Analysis:** `/gas` `/upgrade-safety` `/verify-deploy` `/diff-audit` `/audit-diff` `/pre-deploy`
+**Analysis:** `/gas` `/upgrade-safety` `/verify-deploy` `/diff-audit` `/audit-diff` `/pre-deploy` `/monitor`
 **Tooling integration:** `/slither` `/mythril`
 **Workflow:** `/rugproof-init` `/dismiss` `/verify-finding` `/bounty` `/bounty-submit` `/demo`
 **Notifications:** `/notify-slack` `/notify-discord` `/tweet`
@@ -90,7 +90,7 @@ A detection-skill library that auto-activates when Claude sees matching code pat
 
 **DX meta-skills (2):** caching-and-incremental (skip unchanged files) · progress-and-streaming (live status during long audits).
 
-### 12 MCP servers
+### 13 MCP servers
 
 Chain I/O, test runners, history databases, static-analyzer + fuzz runners — `block-explorer` (Etherscan v2 multichain, EIP-1967/1822 proxy resolution) · `forge-runner` · `hardhat-runner` · `anvil` · `tenderly` · `c4-history` · `sherlock-history` · `gas-tracker` · `token-metadata` (+ GoPlus safety) · `slither-runner` · `mythril-runner` · `fuzz-runner` (Echidna/Medusa/Halmos). Every server degrades gracefully to labeled mock data offline, so the plugin works with zero configuration.
 
@@ -145,10 +145,10 @@ The site is built from the `docs/` folder via the GitHub Pages workflow at `.git
 RugProof/
 ├── .claude-plugin/plugin.json        # marketplace manifest + MCP/hook wiring
 ├── .github/                          # workflows (pages, pr-audit, release) + action + templates
-├── commands/                         # 44 slash commands (real prompts)
+├── commands/                         # 45 slash commands (real prompts)
 ├── agents/                           # 23 subagents
 ├── skills/                           # 45 auto-invoked detection skills
-├── mcp/                              # 12 MCP servers (TypeScript)
+├── mcp/                              # 13 MCP servers (TypeScript)
 ├── scripts/                          # render-card · render-report · md-to-html · telemetry · …
 ├── hooks/                            # 4 hooks
 ├── templates/                        # report.md.hbs · report.html.hbs · audit-card.svg.hbs
@@ -170,7 +170,7 @@ RugProof/
 One-liner via Makefile:
 
 ```bash
-make build       # builds all 12 MCP servers + scripts
+make build       # builds all 13 MCP servers + scripts
 make test        # forge tests + NFT tests + MCP smoke test
 make audit-demo  # runs the bundled reentrancy exploit PoC (passes)
 make sample-cards   # rerender PNG audit cards from samples/
@@ -184,7 +184,7 @@ cd mcp && npm install && npm run build
 cd ../scripts && npm install && npm run build
 forge install                   # if you want to refresh git submodules
 forge test -vv                  # exploit PoC against VulnerableVault passes
-node scripts/dist/test-mcp.js   # MCP smoke test (12/12 servers should pass)
+node scripts/dist/test-mcp.js   # MCP smoke test (13/13 servers should pass)
 ```
 
 The plugin.json points to `mcp/<name>-mcp/dist/index.js` for each server. Most return mock data when API keys / external tools are absent so the plugin works out-of-the-box even without a fully configured environment.

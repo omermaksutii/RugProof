@@ -1,6 +1,6 @@
 {
   "name": "@rugproof/scripts",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Rugproof tooling scripts: card + report rendering, notifications, signers, parsers, telemetry.",
   "type": "module",
   "scripts": {
@@ -22,7 +22,8 @@
     "check-update": "node dist/check-update.js",
     "report-crash": "node dist/report-crash.js",
     "telemetry": "node dist/telemetry.js",
-    "test-mcp": "node dist/test-mcp.js"
+    "test-mcp": "node dist/test-mcp.js",
+    "format-bounty": "node dist/format-bounty.js"
   },
   "dependencies": {
     "@noble/curves": "^1.9.7",
