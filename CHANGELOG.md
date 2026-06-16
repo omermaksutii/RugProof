@@ -2,6 +2,19 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [0.8.0] — Unreleased
+
+Source-driven public audit gallery.
+
+### Added
+
+- **`scripts/generate-gallery.mjs`** + **`docs/gallery/manifest.json`**: the audit
+  gallery is now generated from a data manifest (target, grade, vuln, counts, card
+  image, report link) instead of hand-written HTML — adding an audit is a manifest
+  entry + `make gallery`. This is the static seam for a future dynamic submission
+  backend. Self-contained card styling (grade badges, finding counts).
+- CI gates the gallery against drift (like the reference docs); `make gallery`.
+
 ## [0.7.0] — Unreleased
 
 On-chain audit certificate — deploy-ready.

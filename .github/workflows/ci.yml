@@ -83,6 +83,12 @@ jobs:
       - name: Benchmark harness self-check
         run: node scripts/dist/benchmark.js --expected bench/expected.json >/dev/null
 
+      - name: Gallery is in sync
+        run: |
+          node scripts/generate-gallery.mjs
+          git diff --exit-code docs/gallery/index.html \
+            || { echo "::error::gallery is stale — run 'make gallery' and commit"; exit 1; }
+
   live-analyzers:
     name: Live static-analyzer runners
     runs-on: ubuntu-latest
