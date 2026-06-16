@@ -66,6 +66,20 @@
     "token-metadata": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/token-metadata-mcp/dist/index.js"]
+    },
+    "slither-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/slither-runner-mcp/dist/index.js"],
+      "env": {
+        "SLITHER_PATH": "${SLITHER_PATH}"
+      }
+    },
+    "mythril-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/mythril-runner-mcp/dist/index.js"],
+      "env": {
+        "MYTHRIL_PATH": "${MYTHRIL_PATH}"
+      }
     }
   },
   "hooks": {

@@ -71,6 +71,26 @@ const CASES = [
     tool: null, // needs RPC; offline invocation is non-deterministic
     minTools: 1,
   },
+  {
+    name: "slither-runner",
+    expectTools: ["analyze", "is_available"],
+    tool: "analyze",
+    args: { target: "examples/VulnerableVault.sol" },
+    check: (j) => {
+      assert.equal(j.stub, true, "offline -> stub");
+      assert.ok(j.slither?.results?.detectors?.length > 0, "sample has detectors");
+    },
+  },
+  {
+    name: "mythril-runner",
+    expectTools: ["analyze", "is_available"],
+    tool: "analyze",
+    args: { target: "examples/VulnerableVault.sol" },
+    check: (j) => {
+      assert.equal(j.stub, true, "offline -> stub");
+      assert.ok(j.mythril?.issues?.length > 0, "sample has issues");
+    },
+  },
 ];
 
 for (const c of CASES) {
@@ -95,3 +115,15 @@ for (const c of CASES) {
     }
   });
 }
+
+test("token-metadata check_safety: offline falls back to quirks DB with a risk level", async () => {
+  const { invokeText, error } = await callServer("token-metadata", "check_safety", {
+    chain: "ethereum",
+    address: "0xdAC17F958D2ee523a2206206994597C13D831ec7", // USDT
+  });
+  assert.equal(error, null);
+  const j = JSON.parse(invokeText);
+  assert.equal(j.source, "offline-quirks");
+  assert.ok(["low", "medium", "high"].includes(j.risk));
+  assert.equal(j.flags.blacklistable, true); // USDT is blacklistable in the quirks DB
+});

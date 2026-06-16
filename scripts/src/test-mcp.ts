@@ -71,6 +71,16 @@ const SERVERS: Record<string, InvokeSpec> = {
     args: { chain: "ethereum", address: "0xdAC17F958D2ee523a2206206994597C13D831ec7" },
     validate: (t) => t.includes("quirks") ? null : 'expected "quirks"',
   },
+  "slither-runner": {
+    tool: "analyze",
+    args: { target: "examples/VulnerableVault.sol" },
+    validate: (t) => t.includes("slither") ? null : 'expected "slither" payload',
+  },
+  "mythril-runner": {
+    tool: "analyze",
+    args: { target: "examples/VulnerableVault.sol" },
+    validate: (t) => t.includes("mythril") ? null : 'expected "mythril" payload',
+  },
 };
 
 interface JsonRpc {

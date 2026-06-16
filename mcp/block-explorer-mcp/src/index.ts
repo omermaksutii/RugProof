@@ -14,39 +14,31 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import { fetchJSON, isOffline } from "@rugproof/mcp-shared";
 
 type Chain =
   | "ethereum" | "berachain" | "arbitrum" | "base" | "optimism"
   | "polygon" | "bsc" | "linea" | "zksync" | "scroll";
 
-const EXPLORER_BASE: Record<Chain, string> = {
-  ethereum: "https://api.etherscan.io/api",
-  berachain: "https://api.beratrail.io/api",
-  arbitrum: "https://api.arbiscan.io/api",
-  base: "https://api.basescan.org/api",
-  optimism: "https://api-optimistic.etherscan.io/api",
-  polygon: "https://api.polygonscan.com/api",
-  bsc: "https://api.bscscan.com/api",
-  linea: "https://api.lineascan.build/api",
-  zksync: "https://api-era.zksync.network/api",
-  scroll: "https://api.scrollscan.com/api",
+// Etherscan v2 is a single multichain endpoint keyed by chainid with one API
+// key. Chains it covers use that path; Berachain (not on Etherscan v2) keeps its
+// own Beratrail endpoint.
+const ETHERSCAN_V2 = "https://api.etherscan.io/v2/api";
+
+const CHAIN_ID: Record<Chain, number | null> = {
+  ethereum: 1,
+  arbitrum: 42161,
+  base: 8453,
+  optimism: 10,
+  polygon: 137,
+  bsc: 56,
+  linea: 59144,
+  zksync: 324,
+  scroll: 534352,
+  berachain: null, // not on Etherscan v2
 };
 
-const apiKeyFor = (chain: Chain): string => {
-  const env: Record<Chain, string> = {
-    ethereum: "ETHERSCAN_API_KEY",
-    berachain: "BERATRAIL_API_KEY",
-    arbitrum: "ARBISCAN_API_KEY",
-    base: "BASESCAN_API_KEY",
-    optimism: "OPTIMISTIC_ETHERSCAN_API_KEY",
-    polygon: "POLYGONSCAN_API_KEY",
-    bsc: "BSCSCAN_API_KEY",
-    linea: "LINEASCAN_API_KEY",
-    zksync: "ZKSYNC_API_KEY",
-    scroll: "SCROLLSCAN_API_KEY",
-  };
-  return process.env[env[chain]] ?? "";
-};
+const BERATRAIL_BASE = "https://api.beratrail.io/api";
 
 const server = new Server(
   { name: "rugproof-block-explorer", version: "0.1.0" },
@@ -151,28 +143,36 @@ async function fetchExplorer(
   action: string,
   extra: Record<string, string> = {}
 ): Promise<any> {
-  const base = EXPLORER_BASE[chain];
-  if (!base) throw new Error(`unsupported chain: ${chain}`);
-  const key = apiKeyFor(chain);
-  const params = new URLSearchParams({
-    module,
-    action,
-    apikey: key,
-    ...extra,
-  });
+  if (!(chain in CHAIN_ID)) throw new Error(`unsupported chain: ${chain}`);
+
+  // Resolve endpoint + key. Etherscan v2 chains share ETHERSCAN_API_KEY.
+  const chainId = CHAIN_ID[chain];
+  let base: string;
+  let key: string;
+  const params = new URLSearchParams({ module, action, ...extra });
+
+  if (chainId !== null) {
+    base = ETHERSCAN_V2;
+    key = process.env.ETHERSCAN_API_KEY ?? "";
+    params.set("chainid", String(chainId));
+  } else {
+    base = BERATRAIL_BASE;
+    key = process.env.BERATRAIL_API_KEY ?? "";
+  }
+  params.set("apikey", key);
   const url = `${base}?${params.toString()}`;
-  if (!key) {
+
+  if (isOffline() || !key) {
     return {
       __mock: true,
-      __reason: `no API key for ${chain}; returning mock`,
-      url,
+      __reason: isOffline() ? "offline mode" : `no API key for ${chain} (set ETHERSCAN_API_KEY)`,
+      url: url.replace(/apikey=[^&]*/, "apikey=***"),
     };
   }
   try {
-    const res = await fetch(url);
-    return await res.json();
+    return await fetchJSON(url, { retries: 3 });
   } catch (err) {
-    return { __error: String(err), url };
+    return { __error: String(err), url: url.replace(/apikey=[^&]*/, "apikey=***") };
   }
 }
 

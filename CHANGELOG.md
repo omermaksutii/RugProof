@@ -7,6 +7,26 @@ All notable changes to Rugproof will be documented here. Format: [Keep a Changel
 Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
 `docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
 
+### Phase 2 — MCP depth & real integrations (offline-first)
+
+- New shared workspace package `@rugproof/mcp-shared`: `isOffline()`, uniform
+  `stub()` envelope, `fetchJSON()` with retry + exponential backoff + 429/5xx
+  handling, and `hasBinary()` PATH probing — zero runtime dependencies.
+- **New `slither-runner` MCP**: runs `slither --json -` when installed, else
+  returns a labeled representative sample with the same shape; pipe through
+  `parse-slither` for normalized findings. `is_available` reports tool presence.
+- **New `mythril-runner` MCP**: same pattern around `myth analyze -o json`.
+- **block-explorer-mcp**: migrated to the unified **Etherscan v2 multichain** API
+  (single `ETHERSCAN_API_KEY`, `chainid` param) for 9 chains, Beratrail for
+  Berachain; retry/backoff via the shared client; API keys redacted in echoed
+  URLs; honours `RUGPROOF_OFFLINE`.
+- **token-metadata-mcp**: new `check_safety` tool (GoPlus token-security —
+  honeypot / fee-on-transfer / mint authority / blacklist / proxy / owner powers)
+  with an offline fallback derived from the local quirks DB.
+- `/slither` and `/mythril` commands updated to drive the new runner MCPs (and
+  their offline fallbacks); `plugin.json` registers both new servers. MCP count
+  9 → 11; smoke + offline integration tests cover all 11.
+
 ### Phase 1 — tests & CI hardening
 
 - **Test suites** (zero new runtime deps, `node:test`, fully offline):

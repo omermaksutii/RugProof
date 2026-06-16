@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "description": "Workspace for Rugproof MCP servers",
   "workspaces": [
+    "_shared",
     "block-explorer-mcp",
     "forge-runner-mcp",
     "hardhat-runner-mcp",
@@ -12,7 +13,9 @@
     "c4-history-mcp",
     "sherlock-history-mcp",
     "gas-tracker-mcp",
-    "token-metadata-mcp"
+    "token-metadata-mcp",
+    "slither-runner-mcp",
+    "mythril-runner-mcp"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

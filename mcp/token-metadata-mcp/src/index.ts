@@ -11,6 +11,13 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import { fetchJSON, isOffline } from "@rugproof/mcp-shared";
+
+// GoPlus token-security supports these chain ids (public endpoint, no key).
+const GOPLUS_CHAIN_ID: Record<string, string> = {
+  ethereum: "1", bsc: "56", arbitrum: "42161", base: "8453",
+  optimism: "10", polygon: "137", linea: "59144", scroll: "534352", zksync: "324",
+};
 
 const RPCS: Record<string, string> = {
   ethereum: "https://eth.llamarpc.com",
@@ -111,8 +118,40 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["chain", "address"],
       },
     },
+    {
+      name: "check_safety",
+      description:
+        "Token safety/rug check via GoPlus token-security (honeypot, fee-on-transfer, mint authority, blacklist, proxy/upgradeable, owner powers). Falls back to the local quirks DB offline.",
+      inputSchema: {
+        type: "object",
+        properties: { chain: { type: "string" }, address: { type: "string" } },
+        required: ["chain", "address"],
+      },
+    },
   ],
 }));
+
+// Map a GoPlus token-security response to a compact risk summary.
+function summarizeGoPlus(g: any): { flags: Record<string, boolean>; risk: string; notes: string[] } {
+  const truthy = (v: unknown) => v === "1" || v === 1 || v === true;
+  const flags = {
+    honeypot: truthy(g?.is_honeypot),
+    feeOnTransfer: truthy(g?.slippage_modifiable) || Number(g?.buy_tax) > 0 || Number(g?.sell_tax) > 0,
+    blacklistable: truthy(g?.is_blacklisted) || truthy(g?.can_take_back_ownership) || truthy(g?.blacklist),
+    mintable: truthy(g?.is_mintable),
+    pausable: truthy(g?.transfer_pausable) || truthy(g?.is_anti_whale),
+    proxyUpgradeable: truthy(g?.is_proxy),
+    ownerCanModify: truthy(g?.owner_change_balance) || truthy(g?.hidden_owner) || truthy(g?.can_take_back_ownership),
+  };
+  const notes: string[] = [];
+  if (flags.honeypot) notes.push("flagged as honeypot — sells may be blocked");
+  if (flags.feeOnTransfer) notes.push(`buy/sell tax present (buy ${g?.buy_tax ?? "?"}, sell ${g?.sell_tax ?? "?"})`);
+  if (flags.ownerCanModify) notes.push("owner can modify balances / reclaim ownership — rug risk");
+  if (flags.mintable) notes.push("supply is mintable by owner");
+  const high = flags.honeypot || flags.ownerCanModify;
+  const medium = flags.feeOnTransfer || flags.mintable || flags.blacklistable || flags.proxyUpgradeable;
+  return { flags, risk: high ? "high" : medium ? "medium" : "low", notes };
+}
 
 server.setRequestHandler(CallToolRequestSchema, async (req) => {
   const { name, arguments: args } = req.params;
@@ -154,6 +193,51 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
           ? "Known token with no integration-breaking quirks."
           : "Detected quirks may affect ERC-20 integration; see [[token-compatibility]] skill.",
     });
+  }
+
+  if (name === "check_safety") {
+    const { chain, address } = z.object({
+      chain: z.string(), address: z.string(),
+    }).parse(args);
+
+    const goplusId = GOPLUS_CHAIN_ID[chain];
+    const known = KNOWN_QUIRKS[address.toLowerCase()];
+
+    // Offline / unsupported chain → derive a best-effort summary from the local
+    // quirks DB so the tool always returns something useful.
+    if (isOffline() || !goplusId) {
+      const q = known ?? [];
+      const flags = {
+        honeypot: false,
+        feeOnTransfer: q.includes("fee-on-transfer"),
+        blacklistable: q.includes("blacklistable"),
+        mintable: false,
+        pausable: q.includes("pausable"),
+        proxyUpgradeable: false,
+        ownerCanModify: q.includes("blacklistable") || q.includes("pausable"),
+        rebasing: q.includes("rebasing"),
+      };
+      return textResult({
+        address, chain, source: "offline-quirks",
+        known: known !== undefined,
+        risk: flags.ownerCanModify ? "medium" : "low",
+        flags,
+        notes: isOffline() ? ["offline mode: GoPlus not queried"] : [`chain ${chain} not covered by GoPlus`],
+      });
+    }
+
+    try {
+      const url = `https://api.gopluslabs.io/api/v1/token_security/${goplusId}?contract_addresses=${address.toLowerCase()}`;
+      const j = await fetchJSON(url, { retries: 3 });
+      const g = j?.result?.[address.toLowerCase()];
+      if (!g) {
+        return textResult({ address, chain, source: "goplus", risk: "unknown", notes: ["GoPlus returned no data for this address"] });
+      }
+      const { flags, risk, notes } = summarizeGoPlus(g);
+      return textResult({ address, chain, source: "goplus", risk, flags, notes, token_name: g.token_name, token_symbol: g.token_symbol });
+    } catch (err) {
+      return textResult({ address, chain, source: "goplus", risk: "unknown", __error: String(err) });
+    }
   }
 
   throw new Error(`unknown tool: ${name}`);
