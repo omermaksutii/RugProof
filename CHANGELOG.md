@@ -7,6 +7,20 @@ All notable changes to Rugproof will be documented here. Format: [Keep a Changel
 Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
 `docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
 
+### Phase 4 — DX & docs
+
+- `scripts/generate-docs.mjs`: generates the docs-site reference pages
+  (`commands.html`, `skills.html`, `agents.html`, `mcp-reference.html`) directly
+  from `commands/`, `agents/`, `skills/`, so they can't drift. CI fails if they're
+  stale; `make docs` regenerates them.
+- New narrative pages: `configuration.html` (full `.rugproof.yml` schema +
+  recipes), `troubleshooting.html` (stub-data causes, offline mode, common fixes),
+  `telemetry.html` (what's sent, opt-out, privacy switches).
+- Commands cheatsheet now includes a "which command?" decision tree.
+- Refreshed the docs index and README: counts updated (43 commands, 23 agents,
+  42 skills, 11 MCP servers), roadmap rewritten to reflect completed v0.2 phases,
+  stale `v0.1.0` / `web/` references corrected.
+
 ### Phase 3 — detection breadth (agents, skills, commands)
 
 - **4 new specialist agents**: `vyper-specialist` (Vyper 0.2.15 `@nonreentrant`

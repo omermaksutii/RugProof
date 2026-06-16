@@ -64,6 +64,13 @@ jobs:
       - name: E2E report pipeline
         run: bash scripts/test/e2e-report.sh
 
+      - name: Generated docs are in sync
+        run: |
+          node scripts/generate-docs.mjs
+          git diff --exit-code docs/docs/commands.html docs/docs/skills.html \
+            docs/docs/agents.html docs/docs/mcp-reference.html \
+            || { echo "::error::reference docs are stale — run 'make docs' and commit"; exit 1; }
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

@@ -1,5 +1,5 @@
 .PHONY: help build build-mcp build-scripts test test-foundry test-nft test-mcp \
-        test-scripts test-mcp-unit test-mcp-smoke \
+        test-scripts test-mcp-unit test-mcp-smoke docs \
         sample-cards sample-html demo audit-demo render-card clean fmt
 
 DEFAULT_GOAL := help
@@ -56,6 +56,9 @@ sample-html: build-scripts ## Render the 5 sample audit reports as HTML pages
 	    IFS=: read -r src dst <<< "$$pair"; \
 	    node scripts/dist/md-to-html.js --in "samples/$$src" --out "$$dst"; \
 	done
+
+docs: ## Regenerate the source-driven reference pages (commands/skills/agents/mcp)
+	node scripts/generate-docs.mjs
 
 audit-demo: ## Run the bundled exploit PoC against VulnerableVault
 	forge test --match-contract ExploitREENT001 -vv

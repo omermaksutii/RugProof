@@ -48,29 +48,39 @@
     </tbody>
   </table>
 
-  <h2>Quick reference</h2>
+  <h2>Reference</h2>
+  <p>Browsable, generated from source on every release:</p>
+  <ul>
+    <li><a href="docs/commands.html">Commands (43)</a> — cheatsheet + a "which command?" decision tree</li>
+    <li><a href="docs/skills.html">Vulnerability skills (42)</a> — auto-invoked detection library</li>
+    <li><a href="docs/agents.html">Specialist subagents (23)</a> — dispatched by protocol type</li>
+    <li><a href="docs/mcp-reference.html">MCP servers (11)</a> — chain I/O, runners, history DBs</li>
+    <li><a href="docs/configuration.html">Configuration</a> — full <code>.rugproof.yml</code> schema + recipes</li>
+    <li><a href="docs/troubleshooting.html">Troubleshooting</a> — common issues &amp; offline mode</li>
+    <li><a href="docs/telemetry.html">Telemetry &amp; privacy</a> — what's sent, how to opt out</li>
+  </ul>
 
-  <h3>Slash commands (38)</h3>
-  <p>Audit, exploit, simulation, testing, output, workflow, and integration. Full list in the <a href="https://github.com/omermaksutii/RugProof#whats-in-the-box">README</a>.</p>
+  <h3>Slash commands (43)</h3>
+  <p>Audit, exploit, simulation, testing, output, workflow, and integration. See the <a href="docs/commands.html">commands reference</a>.</p>
 
-  <h3>Vulnerability skills (33)</h3>
-  <p>Auto-loaded based on detected code patterns. Covers the full CWE/SWC catalog plus 2025 hot-topics: ERC-4337 AA, cross-chain messaging, ERC-7683 intents, EigenLayer restaking, ERC-4626 inflation, Diamond / EIP-2535, Permit2, ERC-1271.</p>
+  <h3>Vulnerability skills (42)</h3>
+  <p>Auto-loaded based on detected code patterns. Covers the full CWE/SWC catalog plus 2025 hot-topics: ERC-4337 AA, cross-chain messaging, ERC-7683 intents, EigenLayer restaking, ERC-4626 inflation, Diamond / EIP-2535, Permit2, ERC-1271, plus ve-lock governance, fee-on-transfer, signature malleability, MEV/PBS, liquidation cascades, oracle redundancy, cross-contract state, and ZK verifier bugs.</p>
 
-  <h3>Specialist subagents (19)</h3>
-  <p>8 functional (attacker, defender, exploit-poc-writer, invariant-writer, gas-optimizer, remediation-suggester, report-writer, assembly-auditor) and 11 protocol-specific (AMM, lending, staking, bridge, governance, vault, NFT, AA, cross-chain msg, restaking, intents).</p>
+  <h3>Specialist subagents (23)</h3>
+  <p>Functional (attacker, defender, exploit-poc-writer, invariant-writer, gas-optimizer, remediation-suggester, report-writer, assembly-auditor) and protocol-specific (AMM, lending, staking, bridge, governance, vault, NFT, AA, cross-chain msg, restaking, intents, Vyper, L2/sequencer, economic-rug, ZK-verifier).</p>
 
-  <h3>MCP servers (9)</h3>
-  <p>block-explorer, forge-runner, hardhat-runner, anvil, tenderly, c4-history (real GitHub fetch w/ 24h cache), sherlock-history (same), gas-tracker, token-metadata.</p>
+  <h3>MCP servers (11)</h3>
+  <p>block-explorer (Etherscan v2 multichain), forge-runner, hardhat-runner, anvil, tenderly, c4-history, sherlock-history, gas-tracker, token-metadata (+ GoPlus safety), slither-runner, mythril-runner.</p>
 
   <h2>Configuration</h2>
-  <p>See <code>.rugproof.yml.example</code> in the repo for full config (severity thresholds, chains, hooks, caching, telemetry, privacy mode).</p>
+  <p>See the <a href="docs/configuration.html">configuration guide</a> or <code>.rugproof.yml.example</code> in the repo (severity thresholds, chains, hooks, caching, telemetry, privacy mode).</p>
 </main>
 
 <footer>
   <div class="container">
     <div class="footer-bottom">
       <a href="index.html" style="color: var(--text-mid); text-decoration: none;">← back to home</a>
-      <span>v0.1.0</span>
+      <span>v0.2.0</span>
     </div>
   </div>
 </footer>

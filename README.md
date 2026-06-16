@@ -3,7 +3,7 @@
 > Rugproof your code before someone else does.
 
 🌐 **Live site:** [omermaksutii.github.io/RugProof](https://omermaksutii.github.io/RugProof/)
-📦 **Latest:** [v0.1.0](https://github.com/omermaksutii/RugProof/releases/tag/v0.1.0)
+📦 **Latest:** v0.2.0 — 43 commands · 23 agents · 42 skills · 11 MCP servers, now with a real test suite and offline-first integrations
 
 A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, working exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, soulbound on-chain audit certificates, and shareable audit cards — Solidity + Vyper across every major EVM chain.
 
@@ -53,20 +53,20 @@ make audit-demo  # runs the bundled reentrancy exploit (passes)
 
 ## What's in the box
 
-### 38 slash commands
+### 43 slash commands
 
-**Audit:** `/audit` `/audit-deep` `/audit-strict` `/audit-changes` `/audit-live` `/audit-history` `/quick-scan` `/score` `/explain`
+**Audit:** `/audit` `/audit-deep` `/audit-strict` `/audit-changes` `/audit-live` `/audit-history` `/audit-deps` `/audit-multi-chain` `/quick-scan` `/rug-check` `/score` `/explain`
 **Output:** `/report` `/card` `/remediate`
 **Exploit:** `/exploit` `/exploit-chain` `/exploit-live`
 **Simulation:** `/simulate` `/replay-incident`
-**Tests:** `/test-gen` `/invariant` `/fuzz` `/coverage` `/symbolic`
-**Analysis:** `/gas` `/upgrade-safety` `/verify-deploy` `/diff-audit`
+**Tests / proofs:** `/test-gen` `/invariant` `/fuzz` `/coverage` `/symbolic` `/prover`
+**Analysis:** `/gas` `/upgrade-safety` `/verify-deploy` `/diff-audit` `/pre-deploy`
 **Tooling integration:** `/slither` `/mythril`
 **Workflow:** `/rugproof-init` `/dismiss` `/verify-finding` `/bounty` `/bounty-submit` `/demo`
 **Notifications:** `/notify-slack` `/notify-discord` `/tweet`
 **On-chain:** `/mint-cert` (Berachain soulbound audit certificate)
 
-### 19 specialist subagents
+### 23 specialist subagents
 
 **Functional:** `attacker` · `defender` · `exploit-poc-writer` · `invariant-writer` · `gas-optimizer` · `remediation-suggester` · `report-writer` · `assembly-auditor`
 
@@ -74,7 +74,9 @@ make audit-demo  # runs the bundled reentrancy exploit (passes)
 
 **Hot-topic specialists (2025):** `aa-specialist` (ERC-4337) · `crosschain-messaging-specialist` (LayerZero V2 / CCIP / Hyperlane / Wormhole / Axelar) · `restaking-specialist` (EigenLayer / Symbiotic / Karak) · `intents-specialist` (ERC-7683 / UniswapX / CoW)
 
-### 33 auto-invoked vulnerability skills
+**Language / chain / economics:** `vyper-specialist` (Vyper compiler-class bugs) · `l2-sequencer-specialist` (rollup finality, sequencer uptime, L1↔L2) · `economic-rug-specialist` (owner powers + 0–100 rugability score) · `zk-verifier-specialist` (proof-verifier correctness)
+
+### 42 auto-invoked vulnerability skills
 
 A detection-skill library that auto-activates when Claude sees matching code patterns. Covers the full CWE/SWC catalog plus modern DeFi-specific issues:
 
@@ -82,13 +84,15 @@ A detection-skill library that auto-activates when Claude sees matching code pat
 
 **Hot-topic 2025 (8):** ERC-4337 account abstraction · cross-chain messaging · Permit2 / EIP-2612 · ERC-1271 contract signatures · Diamond / EIP-2535 · restaking & EigenLayer AVS · ERC-7683 intents · ERC-4626 inflation/donation.
 
+**v0.2 additions (8):** ve-lock governance · fee-on-transfer accounting · signature malleability · MEV / PBS · liquidation cascades · oracle redundancy failure · cross-contract state inconsistency · ZK verifier bugs.
+
 **AI-quality meta-skills (4):** confidence scoring · multi-pass self-critique (`/audit-strict`) · known-good reference comparison · false-positive feedback loop (`/dismiss` + `.rugproof.yml ignore:` + inline `// rugproof-ignore` markers).
 
 **DX meta-skills (2):** caching-and-incremental (skip unchanged files) · progress-and-streaming (live status during long audits).
 
-### 9 MCP servers
+### 11 MCP servers
 
-Chain I/O, test runners, history databases — `block-explorer` · `forge-runner` · `hardhat-runner` · `anvil` · `tenderly` · `c4-history` · `sherlock-history` · `gas-tracker` · `token-metadata`.
+Chain I/O, test runners, history databases, static-analyzer runners — `block-explorer` (Etherscan v2 multichain) · `forge-runner` · `hardhat-runner` · `anvil` · `tenderly` · `c4-history` · `sherlock-history` · `gas-tracker` · `token-metadata` (+ GoPlus safety) · `slither-runner` · `mythril-runner`. Every server degrades gracefully to labeled mock data offline, so the plugin works with zero configuration.
 
 ### 4 hooks
 
@@ -141,10 +145,10 @@ The site is built from the `docs/` folder via the GitHub Pages workflow at `.git
 RugProof/
 ├── .claude-plugin/plugin.json        # marketplace manifest + MCP/hook wiring
 ├── .github/                          # workflows (pages, pr-audit, release) + action + templates
-├── commands/                         # 38 slash commands (real prompts)
-├── agents/                           # 19 subagents
-├── skills/                           # 33 auto-invoked detection skills
-├── mcp/                              # 9 MCP servers (TypeScript)
+├── commands/                         # 43 slash commands (real prompts)
+├── agents/                           # 23 subagents
+├── skills/                           # 42 auto-invoked detection skills
+├── mcp/                              # 11 MCP servers (TypeScript)
 ├── scripts/                          # render-card · render-report · md-to-html · telemetry · …
 ├── hooks/                            # 4 hooks
 ├── templates/                        # report.md.hbs · report.html.hbs · audit-card.svg.hbs
@@ -166,7 +170,7 @@ RugProof/
 One-liner via Makefile:
 
 ```bash
-make build       # builds all 9 MCP servers + scripts
+make build       # builds all 11 MCP servers + scripts
 make test        # forge tests + NFT tests + MCP smoke test
 make audit-demo  # runs the bundled reentrancy exploit PoC (passes)
 make sample-cards   # rerender PNG audit cards from samples/
@@ -180,23 +184,24 @@ cd mcp && npm install && npm run build
 cd ../scripts && npm install && npm run build
 forge install                   # if you want to refresh git submodules
 forge test -vv                  # exploit PoC against VulnerableVault passes
-node scripts/dist/test-mcp.js   # MCP smoke test (9/9 servers should pass)
+node scripts/dist/test-mcp.js   # MCP smoke test (11/11 servers should pass)
 ```
 
 The plugin.json points to `mcp/<name>-mcp/dist/index.js` for each server. Most return mock data when API keys / external tools are absent so the plugin works out-of-the-box even without a fully configured environment.
 
 ## Roadmap
 
-This v1 release ships the **full skeleton** — every command, agent, skill, MCP, hook, template, and example contract is in place with real content. Phases that follow tighten implementation depth:
+v0.1 shipped the full skeleton; **v0.2 hardens it into a tested, real-integration tool**.
 
-| Phase | Scope |
-|------:|:------|
-| 1 *(this release)* | Full skeleton: 38 commands · 19 agents · 33 skills · 9 MCPs · 4 hooks · 5 demo contracts · NFT cert · GitHub Action · Pages site |
-| 2 | Wire `/exploit` end-to-end through `forge-runner-mcp` against real protocol forks |
-| 3 | Real Etherscan-family integration in `block-explorer-mcp`; live audits production-ready |
-| 4 | Tighten DeFi specialists with real-world test corpora; ship community rule packs |
-| 5 | Public audit gallery served from a dynamic backend; bug-bounty submission API integration |
-| 6 | Multi-language (Vyper, Stylus/Rust); on-chain audit certificate live on Berachain mainnet; Claude Code marketplace launch |
+| Phase | Scope | Status |
+|------:|:------|:------|
+| 0.1.0 | Full skeleton: every command · agent · skill · MCP · hook · template · demo contract · NFT cert · Action · Pages site | ✅ shipped |
+| 0.2.0 — bug-fixes | MCP fragility fixes (anvil readiness, hardhat hang, case-insensitive quirks, robust history parsing), version reconcile | ✅ done |
+| 0.2.0 — tests/CI | Unit + integration suites (parsers, EIP-712 signer, all 11 MCPs), e2e report pipeline, lint + secret-scan + version-sync gates, published findings schema | ✅ done |
+| 0.2.0 — MCP depth | Etherscan v2 multichain, GoPlus token-safety, `slither-runner` + `mythril-runner` MCPs, shared retry/backoff client — all offline-first | ✅ done |
+| 0.2.0 — breadth | 4 specialists (Vyper, L2/sequencer, economic-rug, ZK-verifier) · 8 skills · 5 commands · formalized dispatch | ✅ done |
+| 0.2.0 — docs | Source-generated command/skill/agent/MCP reference, config + troubleshooting + telemetry guides | ✅ done |
+| next | Wire `/exploit` end-to-end against real forks · community rule packs · dynamic audit gallery · bug-bounty submission API · on-chain certificate live on Berachain mainnet |  planned |
 
 ## License
 
