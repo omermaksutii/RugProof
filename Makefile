@@ -1,5 +1,5 @@
 .PHONY: help build build-mcp build-scripts test test-foundry test-nft test-mcp \
-        test-scripts test-mcp-unit test-mcp-smoke docs validate-rules bench \
+        test-scripts test-mcp-unit test-mcp-smoke docs gallery validate-rules bench \
         deploy-cert-testnet deploy-cert-mainnet \
         sample-cards sample-html demo audit-demo render-card clean fmt
 
@@ -60,6 +60,9 @@ sample-html: build-scripts ## Render the 5 sample audit reports as HTML pages
 
 docs: ## Regenerate the source-driven reference pages (commands/skills/agents/mcp)
 	node scripts/generate-docs.mjs
+
+gallery: ## Regenerate the audit gallery from docs/gallery/manifest.json
+	node scripts/generate-gallery.mjs
 
 validate-rules: ## Validate every bundled rule pack
 	@for p in rules/*/; do \
