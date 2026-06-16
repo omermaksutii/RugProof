@@ -2,7 +2,131 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] — Unreleased
+
+Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
+`docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
+
+### Phase 5 — regression tracking
+
+- New `scripts/src/diff-reports.ts` (`diffReports()` + CLI): diffs two Rugproof
+  report JSONs by finding id → added / fixed / persisting, per-severity counts
+  delta, grade change, and a `regressed` flag (new High/Critical) that exits
+  non-zero so it works as a CI gate. Unit-tested.
+- New `/audit-diff` command driving it (before-vs-after of the same contract;
+  distinct from `/diff-audit`, which compares code against a canonical library).
+- `/audit-strict` gains an optional N-of-M specialist-panel consensus tier for
+  the strongest false-positive suppression. Commands 43 → 44.
+
+### Phase 4 — DX & docs
+
+- `scripts/generate-docs.mjs`: generates the docs-site reference pages
+  (`commands.html`, `skills.html`, `agents.html`, `mcp-reference.html`) directly
+  from `commands/`, `agents/`, `skills/`, so they can't drift. CI fails if they're
+  stale; `make docs` regenerates them.
+- New narrative pages: `configuration.html` (full `.rugproof.yml` schema +
+  recipes), `troubleshooting.html` (stub-data causes, offline mode, common fixes),
+  `telemetry.html` (what's sent, opt-out, privacy switches).
+- Commands cheatsheet now includes a "which command?" decision tree.
+- Refreshed the docs index and README: counts updated (43 commands, 23 agents,
+  42 skills, 11 MCP servers), roadmap rewritten to reflect completed v0.2 phases,
+  stale `v0.1.0` / `web/` references corrected.
+
+### Phase 3 — detection breadth (agents, skills, commands)
+
+- **4 new specialist agents**: `vyper-specialist` (Vyper 0.2.15 `@nonreentrant`
+  miscompile + decorator/auth pitfalls), `l2-sequencer-specialist` (sequencer
+  uptime, force-inclusion, L1↔L2 finality, address aliasing, per-stack opcode
+  differences), `economic-rug-specialist` (owner-power rug vectors + a 0-100
+  rugability score), `zk-verifier-specialist` (proof-verifier correctness,
+  pairing precompiles, nullifiers, trusted setup).
+- **8 new vulnerability skills**: ve-lock-governance, fee-on-transfer,
+  signature-malleability, mev-pbs, liquidation-cascade, oracle-redundancy,
+  cross-contract-state, zk-verifier-bugs.
+- **5 new commands**: `/audit-deps` (dependency/version advisory audit),
+  `/audit-multi-chain` (cross-chain config-drift diff), `/rug-check` (rugability
+  score + owner-power checklist), `/prover` (Halmos/Certora formal verification
+  with property templates), `/pre-deploy` (launch checklist + go/no-go).
+- Formalized the `/audit` specialist-dispatch table (protocol signal → agents,
+  now covering all 23 specialists) and expanded its skill-coverage list.
+- Wired the bundled Vyper demo (`examples-vyper/VulnerableVyper.vy`) into `/demo`.
+- Counts: agents 19 → 23, skills 33 → 42 (incl. earlier additions), commands 38 → 43.
+
+### Phase 2 — MCP depth & real integrations (offline-first)
+
+- New shared workspace package `@rugproof/mcp-shared`: `isOffline()`, uniform
+  `stub()` envelope, `fetchJSON()` with retry + exponential backoff + 429/5xx
+  handling, and `hasBinary()` PATH probing — zero runtime dependencies.
+- **New `slither-runner` MCP**: runs `slither --json -` when installed, else
+  returns a labeled representative sample with the same shape; pipe through
+  `parse-slither` for normalized findings. `is_available` reports tool presence.
+- **New `mythril-runner` MCP**: same pattern around `myth analyze -o json`.
+- **block-explorer-mcp**: migrated to the unified **Etherscan v2 multichain** API
+  (single `ETHERSCAN_API_KEY`, `chainid` param) for 9 chains, Beratrail for
+  Berachain; retry/backoff via the shared client; API keys redacted in echoed
+  URLs; honours `RUGPROOF_OFFLINE`.
+- **token-metadata-mcp**: new `check_safety` tool (GoPlus token-security —
+  honeypot / fee-on-transfer / mint authority / blacklist / proxy / owner powers)
+  with an offline fallback derived from the local quirks DB.
+- `/slither` and `/mythril` commands updated to drive the new runner MCPs (and
+  their offline fallbacks); `plugin.json` registers both new servers. MCP count
+  9 → 11; smoke + offline integration tests cover all 11.
+
+### Phase 1 — tests & CI hardening
+
+- **Test suites** (zero new runtime deps, `node:test`, fully offline):
+  - `scripts/test/`: unit tests for the Slither/Mythril parsers (severity remap,
+    detector/SWC → vuln mapping, grading) and the EIP-712 cert signer (known-vector
+    address derivation, determinism, and a full ecrecover round-trip that matches
+    `AuditCertificate.sol`).
+  - `mcp/test/`: spawns each server over stdio and verifies tool listing plus an
+    offline (stub/in-memory) invocation — no keys or binaries required.
+  - `scripts/test/e2e-report.sh`: renders a PNG card + HTML report and validates
+    the card summary, exercising the full output pipeline.
+- Refactored `parse-slither` / `parse-mythril` / `sign-cert` to export their pure
+  logic behind an entry-guard so it is importable and testable.
+- Published `schemas/finding.schema.json` (the normalized report shape) and
+  validate parser output against it in tests.
+- `scripts/check-versions.mjs`: fails CI/release if any manifest version or the
+  CHANGELOG drift apart.
+- **CI** (`.github/workflows/ci.yml`): build + Foundry/NFT/script/MCP/e2e tests +
+  version-sync on every push/PR; `forge fmt --check` lint job; gitleaks secret scan.
+- `rugproof-pr.yml` no longer silently swallows `forge build` failures (now a
+  surfaced warning annotation); `release.yml` gates on version-sync and tag match.
+- `forge fmt` applied to the demo contracts; Makefile wired to the new test
+  targets and its stale `web/` paths corrected to `docs/`.
+
+### Phase 0 — cleanup & bug fixes
+
+- **anvil-mcp**: replaced the fixed 1.5s post-spawn sleep with real RPC readiness
+  polling (`waitForRpc`); a fork that never comes up now errors instead of
+  returning an unusable URL.
+- **hardhat-runner-mcp**: `npx --no-install` + closed stdin so the runner fails
+  fast in non-Hardhat directories instead of hanging on an install prompt; added
+  a configurable process timeout (`RUGPROOF_HH_TIMEOUT_MS`). Fixes the MCP
+  smoke-test timeout.
+- **token-metadata-mcp**: known-quirks DB is now keyed by lowercase address so
+  lookups are case-insensitive (previously a checksummed input missed); added
+  sDAI/stETH/MKR/WETH entries and a `known` flag in the response.
+- **c4-history-mcp / sherlock-history-mcp**: robust protocol-name extraction from
+  contest repo slugs (no longer assumes a `YYYY-MM-` prefix / `-judging` suffix).
+- **forge-runner-mcp**: mock fallbacks now carry a `__reason` so stub gas /
+  coverage / storage data is clearly labeled.
+- **block-explorer-mcp**: `get_constructor_args` reads real data from
+  `getsourcecode` when an API key is present; `get_trace` stub is labeled and
+  points to the anvil/tenderly MCP for real traces.
+- Fixed stale `/bounty` "TODO when available" reference in `/exploit-live`.
+- Version reconcile: manifests, MCP/scripts workspaces bumped to `0.2.0`.
+
+## [0.1.1] — 2026-05-20
+
+### Added / Changed
+
+- `marketplace.json` manifest for marketplace listing.
+- Real `notify-discord` / `notify-slack`, Slither/Mythril parsers, and EIP-712
+  certificate signer scripts.
+- Vyper pattern support; PDF report rendering.
+- MCP invoke tests in the smoke runner.
 
 ## [0.1.0] — 2026-05-13
 
@@ -58,7 +182,7 @@ Soulbound ERC-721 (`nft/src/AuditCertificate.sol`) with EIP-712 issuer-signed mi
 
 #### Web
 
-Landing page · gallery (5 cards) · 5 sample HTML reports · docs index. Static site at `web/`.
+Landing page · gallery (5 cards) · 5 sample HTML reports · docs index. Static site at `docs/`, auto-deployed to GitHub Pages.
 
 #### CI/CD
 
@@ -72,5 +196,6 @@ GitHub Action (`omermaksutii/RugProof-action@v1` composite action) + workflows f
 
 `LICENSE` (MIT) · `SECURITY.md` · `CONTRIBUTING.md` · `CODE_OF_CONDUCT.md` · `.gitmodules` · `foundry.toml` · `remappings.txt` · `.rugproof.yml.example` · `.rugproofignore.example` · `Makefile`.
 
-[Unreleased]: https://github.com/omermaksutii/RugProof/compare/v0.1.0...HEAD
+[0.2.0]: https://github.com/omermaksutii/RugProof/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/omermaksutii/RugProof/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/omermaksutii/RugProof/releases/tag/v0.1.0

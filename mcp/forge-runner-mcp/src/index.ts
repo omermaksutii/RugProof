@@ -122,6 +122,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     if (r.code !== 0) {
       return textResult({
         __stub: true,
+        __reason: "forge unavailable or `forge test --gas-report` failed; returning representative mock gas figures",
         report: {
           deposit: { avg: 147000, min: 142000, max: 158000, median: 144000 },
           withdraw: { avg: 203000, min: 189000, max: 225000, median: 198000 },
@@ -142,6 +143,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     if (r.code !== 0) {
       return textResult({
         __stub: true,
+        __reason: "forge unavailable or `forge coverage` failed; returning representative mock coverage",
         files: [
           { path: "src/Vault.sol", lines: 78, branches: 71 },
           { path: "src/Oracle.sol", lines: 92, branches: 84 },
@@ -162,6 +164,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     if (r.code !== 0) {
       return textResult({
         __stub: true,
+        __reason: "forge unavailable or `forge inspect` failed; returning representative mock storage layout",
         storage: [
           { label: "owner", offset: 0, slot: "0", type: "t_address" },
           { label: "balance", offset: 0, slot: "1", type: "t_mapping(t_address,t_uint256)" },

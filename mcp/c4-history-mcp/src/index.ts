@@ -73,7 +73,7 @@ async function fetchFromGitHub(query: string): Promise<Finding[]> {
     const j: any = await res.json();
     return (j.items || []).slice(0, 20).map((it: any): Finding => ({
       id: `C4-${(it.repository_url || "").split("/").pop()}-${it.number}`,
-      protocol: (it.repository_url || "").split("/").pop()?.replace(/^\d{4}-\d{2}-/, "") ?? "?",
+      protocol: repoToProtocol(it.repository_url),
       severity: severityFromLabels(it.labels),
       title: it.title,
       vuln: vulnFromLabels(it.labels),
@@ -84,6 +84,23 @@ async function fetchFromGitHub(query: string): Promise<Finding[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * Derive a human protocol name from a Code4rena repo URL. C4 repos are named
+ * like `2023-07-curve-findings` or `2024-03-munchables`. Strip the leading
+ * `YYYY-MM-` (or `YYYY-`) date prefix and common trailing suffixes, robustly —
+ * the old code assumed every repo had a `YYYY-MM-` prefix and otherwise kept
+ * the raw slug.
+ */
+function repoToProtocol(repoUrl: string | undefined): string {
+  const slug = (repoUrl || "").split("/").pop() ?? "";
+  if (!slug) return "?";
+  return slug
+    .replace(/^\d{4}-\d{2}-/, "")
+    .replace(/^\d{4}-/, "")
+    .replace(/-(findings|mitigation-review|judging)$/i, "")
+    || slug;
 }
 
 function severityFromLabels(labels: any[]): string {

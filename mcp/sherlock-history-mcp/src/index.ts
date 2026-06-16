@@ -72,7 +72,7 @@ async function fetchFromGitHub(query: string): Promise<Finding[]> {
     const j: any = await res.json();
     return (j.items || []).slice(0, 20).map((it: any): Finding => ({
       id: `SHRLK-${(it.repository_url || "").split("/").pop()}-${it.number}`,
-      protocol: (it.repository_url || "").split("/").pop()?.replace(/-judging$/, "") ?? "?",
+      protocol: repoToProtocol(it.repository_url),
       severity: severityFromLabels(it.labels),
       title: it.title,
       vuln: vulnFromTitle(it.title),
@@ -83,6 +83,21 @@ async function fetchFromGitHub(query: string): Promise<Finding[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * Derive a protocol name from a Sherlock contest repo URL. Sherlock repos look
+ * like `2024-01-foo-protocol-judging`; strip the `-judging` suffix and any
+ * leading date prefix robustly.
+ */
+function repoToProtocol(repoUrl: string | undefined): string {
+  const slug = (repoUrl || "").split("/").pop() ?? "";
+  if (!slug) return "?";
+  return slug
+    .replace(/-judging$/i, "")
+    .replace(/^\d{4}-\d{2}-/, "")
+    .replace(/^\d{4}-/, "")
+    || slug;
 }
 
 function severityFromLabels(labels: any[]): string {

@@ -1,7 +1,7 @@
 ---
 description: Run Slither and have Claude triage its findings — separate true positives from false positives, write PoCs for real bugs.
 argument-hint: "[file-or-dir]"
-allowed-tools: Read, Bash, Agent, Skill, mcp__forge-runner__*
+allowed-tools: Read, Bash, Agent, Skill, mcp__slither-runner__*, mcp__forge-runner__*
 ---
 
 # /slither — AI triage on top of Slither
@@ -10,17 +10,29 @@ Slither has high recall (catches a lot) but low precision (lots of false positiv
 
 ## Prerequisites
 
-Slither installed: `pip install slither-analyzer`.
+Slither installed: `pip install slither-analyzer`. If it isn't installed, the
+`slither-runner` MCP returns a labeled sample so the workflow still demonstrates
+end-to-end — but real triage needs the real binary.
 
 ## Procedure
 
 ### Step 1 — Run Slither
 
-```bash
-slither <target> --json - 2>/dev/null
+Preferred (works offline with a labeled fallback):
+
+```
+mcp__slither-runner__analyze(target=<file-or-dir>)
 ```
 
-Capture the JSON output. It contains detectors fired, severity (Slither's own), affected lines.
+The result carries `slither` (raw Slither JSON) and `stub: true` when the sample
+was used. Pipe the `slither` payload through the parser for normalized findings:
+
+```bash
+echo '<slither-json>' | node "${CLAUDE_PLUGIN_ROOT}/scripts/dist/parse-slither.js"
+```
+
+Or call Slither directly if you prefer: `slither <target> --json - 2>/dev/null`.
+The JSON contains detectors fired, severity (Slither's own), affected lines.
 
 ### Step 2 — For each Slither finding
 

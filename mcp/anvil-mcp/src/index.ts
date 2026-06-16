@@ -98,6 +98,21 @@ async function rpc(url: string, method: string, params: unknown[]): Promise<any>
   }
 }
 
+/**
+ * Poll the anvil JSON-RPC until it answers eth_blockNumber or the deadline
+ * passes. Replaces a fixed sleep so we don't race a slow fork (or waste time on
+ * a fast one). Returns true once anvil is serving requests.
+ */
+async function waitForRpc(url: string, timeoutMs = 20000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const r = await rpc(url, "eth_blockNumber", []);
+    if (r && typeof r.result === "string") return true;
+    await new Promise((res) => setTimeout(res, 250));
+  }
+  return false;
+}
+
 server.setRequestHandler(CallToolRequestSchema, async (req) => {
   const { name, arguments: args } = req.params;
 
@@ -119,9 +134,16 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     proc.stdout?.on("data", () => {});
     proc.stderr?.on("data", () => {});
     const url = `http://127.0.0.1:${port}`;
-    await new Promise((r) => setTimeout(r, 1500));   // anvil takes ~1s to be ready
+    const ready = await waitForRpc(url, 20000);
+    if (!ready) {
+      try { proc.kill(); } catch {}
+      return textResult({
+        __error: `anvil did not become ready within 20s on ${url}`,
+        hint: "is `anvil` on PATH? is the fork RPC reachable?",
+      });
+    }
     forks.set(id, { proc, url, chain, block: block ?? "latest" });
-    return textResult({ id, url, chain, block: block ?? "latest" });
+    return textResult({ id, url, chain, block: block ?? "latest", ready });
   }
 
   if (name === "kill_fork") {

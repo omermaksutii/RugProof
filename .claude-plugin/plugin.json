@@ -1,6 +1,6 @@
 {
   "name": "rugproof",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
   "author": {
     "name": "Rugproof",
@@ -66,6 +66,20 @@
     "token-metadata": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/token-metadata-mcp/dist/index.js"]
+    },
+    "slither-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/slither-runner-mcp/dist/index.js"],
+      "env": {
+        "SLITHER_PATH": "${SLITHER_PATH}"
+      }
+    },
+    "mythril-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/mythril-runner-mcp/dist/index.js"],
+      "env": {
+        "MYTHRIL_PATH": "${MYTHRIL_PATH}"
+      }
     }
   },
   "hooks": {

@@ -21,7 +21,7 @@ contract Inflatable4626 {
     }
 
     function totalAssets() public view returns (uint256) {
-        return asset.balanceOf(address(this));   // ← INFL-002 raw balance, donatable
+        return asset.balanceOf(address(this)); // ← INFL-002 raw balance, donatable
     }
 
     /// INFL-001 — Naive share math. First depositor + donation can dilute next depositor to zero shares.
@@ -30,16 +30,16 @@ contract Inflatable4626 {
         if (totalSupply == 0) {
             shares = assets;
         } else {
-            shares = assets * totalSupply / totalAssets();   // ← rounds DOWN; victim can get 0 shares
+            shares = assets * totalSupply / totalAssets(); // ← rounds DOWN; victim can get 0 shares
         }
-        require(shares > 0, "zero shares");      // ← only revert; no min check on `assets`
+        require(shares > 0, "zero shares"); // ← only revert; no min check on `assets`
         require(asset.transferFrom(msg.sender, address(this), assets), "xfer");
         totalSupply += shares;
         balanceOf[msg.sender] += shares;
     }
 
     function withdraw(uint256 shares) external returns (uint256 assets) {
-        assets = shares * totalAssets() / totalSupply;   // ← INFL-003 round direction reversed (favors withdrawer)
+        assets = shares * totalAssets() / totalSupply; // ← INFL-003 round direction reversed (favors withdrawer)
         balanceOf[msg.sender] -= shares;
         totalSupply -= shares;
         require(asset.transfer(msg.sender, assets), "xfer");

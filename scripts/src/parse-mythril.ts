@@ -9,6 +9,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 function parseArgs(argv: string[]): Record<string, string> {
   const out: Record<string, string> = {};
@@ -68,7 +69,7 @@ async function readInput(path?: string): Promise<any> {
   });
 }
 
-function normalize(myth: any) {
+export function normalize(myth: any) {
   const issues = myth?.issues ?? [];
   const findings = issues.map((iss: any, idx: number) => {
     const sev = MYTHRIL_TO_RUGPROOF_SEVERITY[iss.severity] ?? "Info";
@@ -110,7 +111,7 @@ function normalize(myth: any) {
   };
 }
 
-function pickGrade(c: Record<string, number>): string {
+export function pickGrade(c: Record<string, number>): string {
   if (c.critical > 0) return "F";
   if (c.high > 2) return "D";
   if (c.high > 0) return "C";
@@ -130,4 +131,7 @@ async function main() {
   }
 }
 
-main().catch((err) => { console.error("parse-mythril failed:", err); process.exit(1); });
+const isEntry = !!process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isEntry) {
+  main().catch((err) => { console.error("parse-mythril failed:", err); process.exit(1); });
+}

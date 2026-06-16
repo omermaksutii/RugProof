@@ -1,7 +1,7 @@
 ---
 description: Run Mythril (symbolic execution) and have Claude triage its findings — turn symbolic counter-examples into Foundry PoCs.
 argument-hint: "[file]"
-allowed-tools: Read, Bash, Agent, Skill, mcp__forge-runner__*
+allowed-tools: Read, Bash, Agent, Skill, mcp__mythril-runner__*, mcp__forge-runner__*
 ---
 
 # /mythril — AI triage on top of Mythril
@@ -10,17 +10,28 @@ Mythril uses symbolic execution to find exploits. Powerful, but its output is de
 
 ## Prerequisites
 
-`pip install mythril`.
+`pip install mythril`. If it isn't installed, the `mythril-runner` MCP returns a
+labeled sample so the workflow still runs end-to-end.
 
 ## Procedure
 
 ### Step 1 — Run Mythril
 
-```bash
-myth analyze <file> -o json
+Preferred (offline-safe):
+
+```
+mcp__mythril-runner__analyze(target=<file>)
 ```
 
-Capture issues, each with a SWC ID, severity, and a symbolic-execution path.
+The result carries `mythril` (raw Mythril JSON) and `stub: true` when the sample
+was used. Normalize via the parser:
+
+```bash
+echo '<mythril-json>' | node "${CLAUDE_PLUGIN_ROOT}/scripts/dist/parse-mythril.js"
+```
+
+Or run directly: `myth analyze <file> -o json`. Capture issues, each with a SWC
+ID, severity, and a symbolic-execution path.
 
 ### Step 2 — For each Mythril issue
 
