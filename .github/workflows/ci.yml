@@ -23,7 +23,7 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
 
@@ -70,6 +70,42 @@ jobs:
           git diff --exit-code docs/docs/commands.html docs/docs/skills.html \
             docs/docs/agents.html docs/docs/mcp-reference.html \
             || { echo "::error::reference docs are stale — run 'make docs' and commit"; exit 1; }
+
+  live-analyzers:
+    name: Live static-analyzer runners
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+      - name: Install Slither + Mythril
+        run: pip install slither-analyzer mythril
+      - name: Build MCP servers + scripts
+        run: |
+          (cd mcp && npm install && npm run build)
+          (cd scripts && npm install && npm run build)
+      - name: slither-runner + mythril-runner respond
+        run: |
+          node scripts/dist/test-mcp.js slither-runner
+          node scripts/dist/test-mcp.js mythril-runner
+      - name: Slither → parse-slither end-to-end on a demo contract
+        run: |
+          slither examples/VulnerableVault.sol --json - > /tmp/sl.json 2>/dev/null || true
+          if [ -s /tmp/sl.json ]; then
+            node scripts/dist/parse-slither.js --in /tmp/sl.json --out /tmp/findings.json
+            node -e 'const f=require("/tmp/findings.json"); if(!Array.isArray(f.findings)) throw new Error("bad parse"); console.log("slither→rugproof:", f.findings.length, "findings, grade", f.grade)'
+          else
+            echo "::warning::slither emitted no JSON for the demo contract (non-fatal)"
+          fi
 
   lint:
     name: Lint

@@ -27,17 +27,22 @@ If not verified, abort and tell the user to either verify the contract or supply
 ### Step 2 — Snapshot deployment state
 
 - Owner / admin addresses.
-- Proxy implementation if proxy (EIP-1967 slots via `mcp__block-explorer__get_storage_at`).
 - Total supply, key balances.
 - Token addresses the contract holds.
 
 ### Step 3 — Identify proxy/upgrade situation
 
-- Is this a proxy? If yes:
-  - Pull the implementation's source too.
-  - Check `_authorizeUpgrade` for centralization (see [[centralization-risk]]).
-  - Check storage layout for collisions (see [[storage-layout]]).
-- Beacon? Diamond? Inventory facets.
+Resolve the proxy pattern in one call (reads EIP-1967/1822 slots for you):
+
+```
+mcp__block-explorer__resolve_proxy(chain=<chain>, address=<addr>)
+```
+
+It returns `{ isProxy, pattern, implementation, admin, beacon }`. If `isProxy`:
+  - Pull the **implementation's** source too (`get_source_code` on `implementation`).
+  - Check `_authorizeUpgrade` / admin for centralization (see [[centralization-risk]]).
+  - Check storage layout for collisions across the upgrade (see [[storage-layout]]).
+  - For a beacon, audit the beacon's upgrade authority; for a Diamond (EIP-2535), inventory facets (see [[diamond-eip2535]]).
 
 ### Step 4 — Run /audit on the source
 

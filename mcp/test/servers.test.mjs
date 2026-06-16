@@ -8,7 +8,7 @@ import { callServer, hasServer } from "./_rpc.mjs";
 const CASES = [
   {
     name: "block-explorer",
-    expectTools: ["get_source_code", "get_abi", "get_runtime_code", "get_constructor_args", "get_storage_at", "get_tx", "get_trace"],
+    expectTools: ["get_source_code", "get_abi", "get_runtime_code", "get_constructor_args", "get_storage_at", "get_tx", "get_trace", "resolve_proxy"],
     tool: "get_constructor_args",
     args: { chain: "ethereum", address: "0x0000000000000000000000000000000000000001" },
     check: (j) => assert.ok("constructorArguments" in j || j.__stub, "expected constructor args or stub"),
@@ -115,6 +115,18 @@ for (const c of CASES) {
     }
   });
 }
+
+test("block-explorer resolve_proxy: offline returns a labeled proxy sample", async () => {
+  const { invokeText, error } = await callServer("block-explorer", "resolve_proxy", {
+    chain: "ethereum",
+    address: "0x0000000000000000000000000000000000000001",
+  });
+  assert.equal(error, null);
+  const j = JSON.parse(invokeText);
+  assert.equal(j.isProxy, true);
+  assert.match(j.pattern, /EIP-1967/);
+  assert.ok(j.implementation, "has an implementation address");
+});
 
 test("token-metadata check_safety: offline falls back to quirks DB with a risk level", async () => {
   const { invokeText, error } = await callServer("token-metadata", "check_safety", {

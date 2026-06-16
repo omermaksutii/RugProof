@@ -57,7 +57,7 @@ const skills = readDir("skills")
 
 // MCP servers + their tools (curated from plugin.json + server sources).
 const mcp = [
-  { name: "block-explorer", tools: ["get_source_code", "get_abi", "get_runtime_code", "get_constructor_args", "get_storage_at", "get_tx", "get_trace"], note: "Etherscan v2 multichain (single ETHERSCAN_API_KEY) + Beratrail; offline → labeled mock." },
+  { name: "block-explorer", tools: ["get_source_code", "get_abi", "get_runtime_code", "get_constructor_args", "get_storage_at", "get_tx", "get_trace", "resolve_proxy"], note: "Etherscan v2 multichain (single ETHERSCAN_API_KEY) + Beratrail; EIP-1967/1822 proxy resolution; offline → labeled mock." },
   { name: "forge-runner", tools: ["build", "test", "gas_report", "coverage", "inspect_storage", "exec"], note: "Wraps Foundry; mock fallback when forge absent (labeled with __reason)." },
   { name: "hardhat-runner", tools: ["compile", "test", "run"], note: "Wraps Hardhat via npx --no-install; fails fast outside HH projects." },
   { name: "anvil", tools: ["fork", "kill_fork", "send_raw_tx", "snapshot", "revert", "list_forks"], note: "Local forks; polls RPC readiness before returning." },
