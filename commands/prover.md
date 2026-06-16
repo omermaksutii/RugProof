@@ -1,7 +1,7 @@
 ---
 description: Formal verification entrypoint — prove a property holds for all inputs with Halmos (symbolic, offline) or Certora (CVL) using ready-made property templates.
 argument-hint: "[contract] [property]"
-allowed-tools: Read, Write, Bash, Skill, mcp__forge-runner__*
+allowed-tools: Read, Write, Bash, Skill, mcp__forge-runner__*, mcp__fuzz-runner__*
 ---
 
 # /prover — prove it, don't just fuzz it

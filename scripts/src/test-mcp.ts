@@ -81,6 +81,11 @@ const SERVERS: Record<string, InvokeSpec> = {
     args: { target: "examples/VulnerableVault.sol" },
     validate: (t) => t.includes("mythril") ? null : 'expected "mythril" payload',
   },
+  "fuzz-runner": {
+    tool: "halmos",
+    args: {},
+    validate: (t) => (t.includes("result") || t.includes("stub")) ? null : 'expected halmos result/stub',
+  },
 };
 
 interface JsonRpc {

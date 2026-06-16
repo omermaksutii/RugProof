@@ -1,6 +1,6 @@
 {
   "name": "rugproof",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
   "author": {
     "name": "Rugproof",
@@ -79,6 +79,15 @@
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/mythril-runner-mcp/dist/index.js"],
       "env": {
         "MYTHRIL_PATH": "${MYTHRIL_PATH}"
+      }
+    },
+    "fuzz-runner": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/fuzz-runner-mcp/dist/index.js"],
+      "env": {
+        "ECHIDNA_PATH": "${ECHIDNA_PATH}",
+        "MEDUSA_PATH": "${MEDUSA_PATH}",
+        "HALMOS_PATH": "${HALMOS_PATH}"
       }
     }
   },

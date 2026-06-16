@@ -91,6 +91,16 @@ const CASES = [
       assert.ok(j.mythril?.issues?.length > 0, "sample has issues");
     },
   },
+  {
+    name: "fuzz-runner",
+    expectTools: ["echidna", "medusa", "halmos", "is_available"],
+    tool: "halmos",
+    args: {},
+    check: (j) => {
+      assert.equal(j.stub, true, "offline -> stub");
+      assert.ok(Array.isArray(j.result?.results), "halmos sample has results");
+    },
+  },
 ];
 
 for (const c of CASES) {
