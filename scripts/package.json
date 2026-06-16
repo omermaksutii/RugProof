@@ -1,6 +1,6 @@
 {
   "name": "@rugproof/scripts",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "Rugproof tooling scripts: card + report rendering, notifications, signers, parsers, telemetry.",
   "type": "module",
   "scripts": {
