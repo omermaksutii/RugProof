@@ -7,6 +7,26 @@ All notable changes to Rugproof will be documented here. Format: [Keep a Changel
 Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
 `docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
 
+### Phase 3 — detection breadth (agents, skills, commands)
+
+- **4 new specialist agents**: `vyper-specialist` (Vyper 0.2.15 `@nonreentrant`
+  miscompile + decorator/auth pitfalls), `l2-sequencer-specialist` (sequencer
+  uptime, force-inclusion, L1↔L2 finality, address aliasing, per-stack opcode
+  differences), `economic-rug-specialist` (owner-power rug vectors + a 0-100
+  rugability score), `zk-verifier-specialist` (proof-verifier correctness,
+  pairing precompiles, nullifiers, trusted setup).
+- **8 new vulnerability skills**: ve-lock-governance, fee-on-transfer,
+  signature-malleability, mev-pbs, liquidation-cascade, oracle-redundancy,
+  cross-contract-state, zk-verifier-bugs.
+- **5 new commands**: `/audit-deps` (dependency/version advisory audit),
+  `/audit-multi-chain` (cross-chain config-drift diff), `/rug-check` (rugability
+  score + owner-power checklist), `/prover` (Halmos/Certora formal verification
+  with property templates), `/pre-deploy` (launch checklist + go/no-go).
+- Formalized the `/audit` specialist-dispatch table (protocol signal → agents,
+  now covering all 23 specialists) and expanded its skill-coverage list.
+- Wired the bundled Vyper demo (`examples-vyper/VulnerableVyper.vy`) into `/demo`.
+- Counts: agents 19 → 23, skills 33 → 42 (incl. earlier additions), commands 38 → 43.
+
 ### Phase 2 — MCP depth & real integrations (offline-first)
 
 - New shared workspace package `@rugproof/mcp-shared`: `isOffline()`, uniform

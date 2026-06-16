@@ -1,6 +1,6 @@
 ---
 description: Run Rugproof against the bundled vulnerable example contracts — first-run "wow moment".
-argument-hint: "[reentrancy|oracle|flash-loan|inflation|replay|all]"
+argument-hint: "[reentrancy|oracle|flash-loan|inflation|replay|vyper|all]"
 allowed-tools: Read, Bash, Agent, Skill
 ---
 
@@ -10,15 +10,16 @@ First-run experience. Lets a new user see Rugproof's output on a real (but safe)
 
 ## Bundled demos
 
-Located in `examples/`:
+Located in `examples/` (Solidity) and `examples-vyper/` (Vyper):
 
 | Demo | Contract | Primary vuln class |
 |---|---|---|
-| `reentrancy` | `VulnerableVault.sol` | reentrancy + access-control |
-| `oracle` | `SpotOracleLending.sol` | oracle-manipulation + flash-loan |
-| `flash-loan` | `FlashLoanGovernance.sol` | governance flash-loan |
-| `inflation` | `Inflatable4626.sol` | ERC-4626 donation attack |
-| `replay` | `ReplayableBridge.sol` | signature replay (cross-chain) |
+| `reentrancy` | `examples/VulnerableVault.sol` | reentrancy + access-control |
+| `oracle` | `examples/SpotOracleLending.sol` | oracle-manipulation + flash-loan |
+| `flash-loan` | `examples/FlashLoanGovernance.sol` | governance flash-loan |
+| `inflation` | `examples/Inflatable4626.sol` | ERC-4626 donation attack |
+| `replay` | `examples/ReplayableBridge.sol` | signature replay (cross-chain) |
+| `vyper` | `examples-vyper/VulnerableVyper.vy` | Vyper 0.2.15 `@nonreentrant` miscompile + access-control |
 
 ## Procedure
 

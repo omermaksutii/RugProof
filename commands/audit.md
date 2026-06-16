@@ -32,24 +32,35 @@ You are conducting a thorough smart contract security audit. Be rigorous; be ske
 
 The `skills/` library auto-loads based on code patterns. Verify you've covered the relevant categories:
 
-reentrancy · access-control · oracle-manipulation · flash-loan-attacks · mev-frontrunning · signature-replay · storage-layout · initialization · unchecked-calls · dos-vectors · integer-issues · delegatecall-risks · tx-context-misuse · token-compatibility · approval-issues · selfdestruct-eip6780 · inline-assembly · pragma-and-addresses · centralization-risk
+reentrancy · access-control · oracle-manipulation · flash-loan-attacks · mev-frontrunning · signature-replay · storage-layout · initialization · unchecked-calls · dos-vectors · integer-issues · delegatecall-risks · tx-context-misuse · token-compatibility · approval-issues · selfdestruct-eip6780 · inline-assembly · pragma-and-addresses · centralization-risk · permit2-patterns · erc1271-contract-signatures · diamond-eip2535 · erc4626-inflation · erc4337-account-abstraction · cross-chain-messaging · restaking-eigenlayer · intents-erc7683 · vyper-specific · ve-lock-governance · fee-on-transfer · signature-malleability · mev-pbs · liquidation-cascade · oracle-redundancy · cross-contract-state · zk-verifier-bugs
 
 For each that matches code in the target, produce findings.
 
 ### Step 3 — Dispatch specialist subagents (parallel)
 
-Based on protocol type detected in Step 1, dispatch in parallel (single message, multiple Agent calls):
+Based on the signals from Step 1, dispatch the matching specialists in parallel (single message, multiple Agent calls). Use this dispatch table:
 
-- AMM detected → `amm-specialist`
-- Lending detected → `lending-specialist`
-- Staking detected → `staking-specialist`
-- Bridge detected → `bridge-specialist`
-- Governance detected → `governance-specialist`
-- ERC-4626/vault detected → `yield-aggregator-specialist`
-- NFT detected → `nft-specialist`
-- Heavy assembly detected → `assembly-auditor`
+| Detected signal | Dispatch agent |
+|---|---|
+| ERC-20 + Pair/Pool/Factory, swap, hooks | `amm-specialist` |
+| LendingPool / cToken / liquidate / health factor | `lending-specialist` |
+| stake + rewards + checkpoints | `staking-specialist` |
+| cross-chain mint/burn, Merkle, message-passing | `bridge-specialist` + `crosschain-messaging-specialist` |
+| Governor / Timelock / proposal / veToken | `governance-specialist` (+ skill [[ve-lock-governance]]) |
+| ERC-4626 / vault / strategy | `yield-aggregator-specialist` |
+| ERC-721 / ERC-1155 / royalties | `nft-specialist` |
+| Heavy Yul / inline assembly | `assembly-auditor` |
+| `# @version` / `.vy` (Vyper source) | `vyper-specialist` |
+| Deployed on / targets an L2 rollup; sequencer-uptime / L1↔L2 messaging | `l2-sequencer-specialist` |
+| Token / staking / vault whose owner powers must be quantified | `economic-rug-specialist` |
+| Proof verifier, pairing precompiles, nullifiers, ZK bridge | `zk-verifier-specialist` |
+| EntryPoint / UserOperation / paymaster (ERC-4337) | `aa-specialist` |
+| EigenLayer / AVS / operator / restaking | `restaking-specialist` |
+| ERC-7683 / intents / solver / reactor | `intents-specialist` |
 
-**Always** dispatch in parallel with these:
+Pick every row whose signal is present — protocols often match several (e.g. an L2 lending vault → `lending-specialist` + `l2-sequencer-specialist` + `economic-rug-specialist`).
+
+**Always** dispatch in parallel with these, regardless of type:
 - `attacker` — adversarial review, look for exploit chains
 - `defender` — what defenses are missing
 
