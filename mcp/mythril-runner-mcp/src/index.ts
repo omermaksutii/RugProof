@@ -14,7 +14,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { spawn } from "node:child_process";
-import { textResult, stub, hasBinary, isOffline } from "@rugproof/mcp-shared";
+import { textResult, stub, hasBinary, isOffline, assertSafeArg } from "@rugproof/mcp-shared";
 
 const MYTH = process.env.MYTHRIL_PATH ?? "myth";
 
@@ -107,6 +107,9 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       cwd: z.string().optional(),
       args: z.array(z.string()).optional(),
     }).parse(args);
+    assertSafeArg(target, "target");
+    if (cwd) assertSafeArg(cwd, "cwd");
+    (extra ?? []).forEach((a, i) => assertSafeArg(a, `args[${i}]`));
 
     if (isOffline() || !(await hasBinary(MYTH))) {
       return stub("mythril not installed or offline; returning representative sample", { mythril: SAMPLE });

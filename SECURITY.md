@@ -28,6 +28,23 @@ Out-of-scope:
 - Issues requiring an attacker who already controls the user's machine
 - Theoretical issues without exploit paths
 
+## Our own security posture
+
+Rugproof is a security tool, so it holds itself to the bar it audits against:
+
+- **No shell injection** — every MCP runner spawns subprocesses with array
+  arguments (no shell), and untrusted `target` / `cwd` / `args` values are run
+  through `assertSafeArg` (rejects NUL bytes, newlines, and overlong values).
+- **Offline-first / no exfiltration** — every server degrades to labeled mock
+  data with zero network calls under `RUGPROOF_OFFLINE=1`; API keys are read only
+  from the environment, never written to disk, and are redacted in echoed URLs.
+- **Bounded output** — tool responses cap captured stdout/stderr to avoid
+  memory blowups on adversarial input.
+- **Tested** — the shared MCP boundary helpers (offline detection, stub envelope,
+  retrying fetch, input validation, content cache) and the `_shared`/server tools
+  have unit + integration tests that run offline in CI; a gitleaks secret scan
+  guards every PR.
+
 ## Reporting a vulnerability in a contract Rugproof audited
 
 If Rugproof identified a finding in a contract you don't own, **do not disclose publicly**. Use the protocol's bounty program:
