@@ -43,7 +43,17 @@ If the chain+address has no entry, look up via the bounty platform's public dire
 
 ### 3. Build the submission
 
-Sections:
+Format it deterministically with the helper (maps severity to the program's
+scale, embeds the PoC, derives the program slug):
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/scripts/dist/format-bounty.js" \
+  --finding finding.json --program program.json \
+  --poc test/live-exploits/Exploit.t.sol --out submission.json
+```
+
+It emits the Immunefi-style payload (`submission.json`) and, with no `--out`, the
+Markdown report on stdout. Sections it produces:
 1. **Title** — `[Critical] Reentrancy in Vault.withdraw drains funds`
 2. **Severity** — translated per program's scale
 3. **Affected asset** — chain + address (proxy + impl if applicable)

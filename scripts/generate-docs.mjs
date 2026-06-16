@@ -69,6 +69,7 @@ const mcp = [
   { name: "slither-runner", tools: ["analyze", "is_available"], note: "Runs Slither if installed, else labeled sample for parse-slither." },
   { name: "mythril-runner", tools: ["analyze", "is_available"], note: "Runs Mythril if installed, else labeled sample for parse-mythril." },
   { name: "fuzz-runner", tools: ["echidna", "medusa", "halmos", "is_available"], note: "Property-fuzz / symbolic runners; real binary if installed, else labeled sample." },
+  { name: "monitoring", tools: ["suggest_monitors", "scan_recent"], note: "Post-deploy watch: recommend alert events for a contract; scan recent logs for upgrade/ownership/pause; offline sample." },
 ];
 
 // --- page shell ----------------------------------------------------------

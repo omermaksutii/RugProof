@@ -1,6 +1,6 @@
 {
   "name": "rugproof",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Smart contract security auditor for Claude Code. Rugproof your code before someone else does.",
   "author": {
     "name": "Rugproof",
@@ -89,6 +89,10 @@
         "MEDUSA_PATH": "${MEDUSA_PATH}",
         "HALMOS_PATH": "${HALMOS_PATH}"
       }
+    },
+    "monitoring": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/monitoring-mcp/dist/index.js"]
     }
   },
   "hooks": {

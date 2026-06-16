@@ -2,6 +2,23 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [0.6.0] — Unreleased
+
+Post-deployment monitoring & bug-bounty submission tooling.
+
+### Added
+
+- **New `monitoring` MCP**: `suggest_monitors` recommends which on-chain events to
+  alert on for a contract (ownership/upgrade/admin/pause/roles + large-transfer,
+  with topic0 hashes and severity — pure/offline), and `scan_recent` flags
+  high-severity events in recent logs (offline → sample). MCP count 12 → 13.
+- **New `/monitor` command**: turns a contract into an alerting plan + scans for
+  alarming activity already on-chain. Commands 44 → 45.
+- **`scripts/format-bounty.ts`**: formats a finding + program metadata into an
+  Immunefi-style submission (severity mapping, PoC embed, slug derivation) as JSON
+  + Markdown; unit-tested and wired into `/bounty-submit` (the POST still needs
+  `IMMUNEFI_API_KEY` — ready to trigger).
+
 ## [0.5.0] — Unreleased
 
 Multi-language coverage & the property-fuzzing / symbolic toolchain.
