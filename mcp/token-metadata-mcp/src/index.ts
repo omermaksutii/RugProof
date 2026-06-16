@@ -32,10 +32,16 @@ const SELECTOR = {
   totalSupply: "0x18160ddd",
 };
 
+// Keyed by lowercase address so lookups are case-insensitive regardless of how
+// the caller checksums the address.
 const KNOWN_QUIRKS: Record<string, string[]> = {
-  "0xdAC17F958D2ee523a2206206994597C13D831ec7": ["non-standard-return", "blacklistable", "pausable"],   // USDT mainnet
-  "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": ["blacklistable", "pausable"],                          // USDC mainnet
-  "0x6B175474E89094C44Da98b954EedeAC495271d0F": ["dai-permit-variant"],                                 // DAI
+  "0xdac17f958d2ee523a2206206994597c13d831ec7": ["non-standard-return", "blacklistable", "pausable"],   // USDT mainnet
+  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48": ["blacklistable", "pausable"],                          // USDC mainnet
+  "0x6b175474e89094c44da98b954eedeac495271d0f": ["dai-permit-variant"],                                 // DAI
+  "0x83f20f44975d03b1b09e64809b757c47f942beea": ["rebasing"],                                           // sDAI
+  "0xae7ab96520de3a18e5e111b5eaab095312d7fe84": ["rebasing"],                                           // stETH
+  "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2": ["dao-pausable"],                                       // MKR
+  "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": [],                                                     // WETH (clean baseline)
 };
 
 async function ethCall(rpc: string, to: string, data: string): Promise<string | null> {
@@ -136,14 +142,17 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     const { address } = z.object({
       chain: z.string(), address: z.string(),
     }).parse(args);
-    const checksummed = address;   // simplification — real impl would checksum
-    const quirks = KNOWN_QUIRKS[checksummed] ?? KNOWN_QUIRKS[checksummed.toLowerCase()] ?? [];
+    const known = KNOWN_QUIRKS[address.toLowerCase()];
+    const quirks = known ?? [];
     return textResult({
       address,
+      known: known !== undefined,
       quirks,
-      hint: quirks.length === 0
-        ? "No known quirks (verify against your own tests)"
-        : "Detected quirks may affect ERC-20 integration; see [[token-compatibility]] skill.",
+      hint: known === undefined
+        ? "Address not in the known-quirks DB — verify ERC-20 behaviour against your own tests."
+        : quirks.length === 0
+          ? "Known token with no integration-breaking quirks."
+          : "Detected quirks may affect ERC-20 integration; see [[token-compatibility]] skill.",
     });
   }
 

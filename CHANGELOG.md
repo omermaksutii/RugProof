@@ -2,7 +2,42 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] — Unreleased
+
+Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
+`docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
+
+### Phase 0 — cleanup & bug fixes
+
+- **anvil-mcp**: replaced the fixed 1.5s post-spawn sleep with real RPC readiness
+  polling (`waitForRpc`); a fork that never comes up now errors instead of
+  returning an unusable URL.
+- **hardhat-runner-mcp**: `npx --no-install` + closed stdin so the runner fails
+  fast in non-Hardhat directories instead of hanging on an install prompt; added
+  a configurable process timeout (`RUGPROOF_HH_TIMEOUT_MS`). Fixes the MCP
+  smoke-test timeout.
+- **token-metadata-mcp**: known-quirks DB is now keyed by lowercase address so
+  lookups are case-insensitive (previously a checksummed input missed); added
+  sDAI/stETH/MKR/WETH entries and a `known` flag in the response.
+- **c4-history-mcp / sherlock-history-mcp**: robust protocol-name extraction from
+  contest repo slugs (no longer assumes a `YYYY-MM-` prefix / `-judging` suffix).
+- **forge-runner-mcp**: mock fallbacks now carry a `__reason` so stub gas /
+  coverage / storage data is clearly labeled.
+- **block-explorer-mcp**: `get_constructor_args` reads real data from
+  `getsourcecode` when an API key is present; `get_trace` stub is labeled and
+  points to the anvil/tenderly MCP for real traces.
+- Fixed stale `/bounty` "TODO when available" reference in `/exploit-live`.
+- Version reconcile: manifests, MCP/scripts workspaces bumped to `0.2.0`.
+
+## [0.1.1] — 2026-05-20
+
+### Added / Changed
+
+- `marketplace.json` manifest for marketplace listing.
+- Real `notify-discord` / `notify-slack`, Slither/Mythril parsers, and EIP-712
+  certificate signer scripts.
+- Vyper pattern support; PDF report rendering.
+- MCP invoke tests in the smoke runner.
 
 ## [0.1.0] — 2026-05-13
 
@@ -58,7 +93,7 @@ Soulbound ERC-721 (`nft/src/AuditCertificate.sol`) with EIP-712 issuer-signed mi
 
 #### Web
 
-Landing page · gallery (5 cards) · 5 sample HTML reports · docs index. Static site at `web/`.
+Landing page · gallery (5 cards) · 5 sample HTML reports · docs index. Static site at `docs/`, auto-deployed to GitHub Pages.
 
 #### CI/CD
 
@@ -72,5 +107,6 @@ GitHub Action (`omermaksutii/RugProof-action@v1` composite action) + workflows f
 
 `LICENSE` (MIT) · `SECURITY.md` · `CONTRIBUTING.md` · `CODE_OF_CONDUCT.md` · `.gitmodules` · `foundry.toml` · `remappings.txt` · `.rugproof.yml.example` · `.rugproofignore.example` · `Makefile`.
 
-[Unreleased]: https://github.com/omermaksutii/RugProof/compare/v0.1.0...HEAD
+[0.2.0]: https://github.com/omermaksutii/RugProof/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/omermaksutii/RugProof/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/omermaksutii/RugProof/releases/tag/v0.1.0

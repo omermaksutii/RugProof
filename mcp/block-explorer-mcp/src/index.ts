@@ -217,8 +217,20 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       return { content: [{ type: "text", text: JSON.stringify(data) }] };
     }
     case "get_constructor_args": {
+      const { chain, address } = z.object({
+        chain: z.string(), address: z.string(),
+      }).parse(args);
+      // Etherscan returns the raw constructor args inside getsourcecode.
+      const data = await fetchExplorer(chain as Chain, "contract", "getsourcecode", { address });
+      if (!data.__mock && Array.isArray(data.result) && data.result[0]) {
+        return { content: [{ type: "text", text: JSON.stringify({
+          constructorArguments: data.result[0].ConstructorArguments ?? "0x",
+          contractName: data.result[0].ContractName ?? null,
+        }) }] };
+      }
       return mockResult({
-        args: ["0x0000000000000000000000000000000000000001", "1000000000000000000"],
+        constructorArguments: "0x" + "00".repeat(32) + "0de0b6b3a7640000",
+        decoded: ["0x0000000000000000000000000000000000000001", "1000000000000000000"],
         abi: [{ name: "owner", type: "address" }, { name: "initialSupply", type: "uint256" }],
       });
     }
@@ -246,7 +258,11 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       return { content: [{ type: "text", text: JSON.stringify(data) }] };
     }
     case "get_trace": {
+      // debug_traceTransaction needs an archive/trace-enabled node, which the
+      // free explorer API tier does not provide — always a labeled stub here.
+      // Use the anvil or tenderly MCP for real traces.
       return mockResult({
+        __reason: "internal-call traces require a trace-enabled node; use the anvil/tenderly MCP for real traces",
         type: "CALL",
         from: "0x0", to: "0x0", value: "0x0", input: "0x", output: "0x",
         calls: [

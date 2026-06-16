@@ -13,14 +13,36 @@ import {
 import { z } from "zod";
 import { spawn } from "node:child_process";
 
-async function runNpx(args: string[], cwd?: string) {
-  return new Promise<{ stdout: string; stderr: string; code: number }>((resolve) => {
-    const child = spawn("npx", args, { cwd, env: process.env });
-    let stdout = "", stderr = "";
+const DEFAULT_TIMEOUT_MS = Number(process.env.RUGPROOF_HH_TIMEOUT_MS ?? 120_000);
+
+async function runNpx(args: string[], cwd?: string, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  return new Promise<{ stdout: string; stderr: string; code: number; timedOut?: boolean }>((resolve) => {
+    // No shell: args are passed to execve directly, so paths can't be
+    // interpreted by a shell (no injection via cwd/script). A timeout guards
+    // against `npx hardhat` hanging when Hardhat isn't installed in `cwd`.
+    // `--no-install` keeps npx from interactively downloading Hardhat when the
+    // cwd isn't a Hardhat project (which would hang on a stdin prompt); stdin is
+    // closed so any residual prompt gets EOF and the process exits fast.
+    const child = spawn("npx", ["--no-install", ...args], {
+      cwd,
+      env: process.env,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "", stderr = "", settled = false;
+    const finish = (r: { stdout: string; stderr: string; code: number; timedOut?: boolean }) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(r);
+    };
+    const timer = setTimeout(() => {
+      try { child.kill("SIGKILL"); } catch {}
+      finish({ stdout, stderr: stderr + `\n[rugproof] timed out after ${timeoutMs}ms`, code: -1, timedOut: true });
+    }, timeoutMs);
     child.stdout.on("data", (d) => (stdout += d.toString()));
     child.stderr.on("data", (d) => (stderr += d.toString()));
-    child.on("close", (code) => resolve({ stdout, stderr, code: code ?? -1 }));
-    child.on("error", (err) => resolve({ stdout: "", stderr: String(err), code: -1 }));
+    child.on("close", (code) => finish({ stdout, stderr, code: code ?? -1 }));
+    child.on("error", (err) => finish({ stdout: "", stderr: String(err), code: -1 }));
   });
 }
 
