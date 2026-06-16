@@ -1,7 +1,7 @@
 {
   "name": "@rugproof/mcp-workspace",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Workspace for Rugproof MCP servers",
   "workspaces": [
     "_shared",

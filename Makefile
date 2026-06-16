@@ -1,5 +1,5 @@
 .PHONY: help build build-mcp build-scripts test test-foundry test-nft test-mcp \
-        test-scripts test-mcp-unit test-mcp-smoke docs \
+        test-scripts test-mcp-unit test-mcp-smoke docs validate-rules bench \
         sample-cards sample-html demo audit-demo render-card clean fmt
 
 DEFAULT_GOAL := help
@@ -59,6 +59,14 @@ sample-html: build-scripts ## Render the 5 sample audit reports as HTML pages
 
 docs: ## Regenerate the source-driven reference pages (commands/skills/agents/mcp)
 	node scripts/generate-docs.mjs
+
+validate-rules: ## Validate every bundled rule pack
+	@for p in rules/*/; do \
+	  if [ -f "$$p/pack.yml" ]; then node scripts/validate-rule-pack.mjs "$$p" || exit 1; fi; \
+	done
+
+bench: build-scripts ## Run the detection benchmark (pass FINDINGS=<dir> for real scores)
+	node scripts/dist/benchmark.js --expected bench/expected.json $(if $(FINDINGS),--findings $(FINDINGS),)
 
 audit-demo: ## Run the bundled exploit PoC against VulnerableVault
 	forge test --match-contract ExploitREENT001 -vv
