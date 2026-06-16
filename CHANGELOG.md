@@ -2,7 +2,26 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
-## [0.2.0] — Unreleased
+## [0.3.0] — Unreleased
+
+Exploit-pipeline & live-audit depth, plus maintenance — the march toward 1.0.
+
+### Added / Changed
+
+- **block-explorer-mcp**: new `resolve_proxy` tool — detects EIP-1967
+  (transparent / UUPS / beacon) and EIP-1822 proxiable patterns by reading the
+  standard storage slots and returns implementation/admin/beacon addresses.
+  `/audit-live` now uses it for one-call proxy resolution.
+- **CI**: new `live-analyzers` job installs real Slither + Mythril and exercises
+  the `slither-runner` / `mythril-runner` MCPs and the `parse-slither` pipeline
+  end-to-end (validates the non-stub path).
+- **deps**: safe Dependabot bumps — `zod` 4, `rimraf` 6, `@types/node` 25 (mcp),
+  `sharp` 0.34 (scripts); `actions/setup-node` v6, `actions/upload-artifact` v7.
+  Deferred: `@noble/*` 2.x (breaking `sign()` API in the security-critical cert
+  signer) and `typescript` 6 (needs a `moduleResolution` migration) — both stay
+  pinned with passing builds rather than risk regressions.
+
+## [0.2.0] — 2026-06-16
 
 Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
 `docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.

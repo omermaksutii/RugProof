@@ -134,8 +134,41 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["chain", "hash"],
       },
     },
+    {
+      name: "resolve_proxy",
+      description:
+        "Detect the proxy pattern at an address (EIP-1967 transparent/UUPS, EIP-1822 proxiable, beacon) by reading the standard storage slots, and return the implementation/admin/beacon addresses.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          chain: { type: "string" },
+          address: { type: "string" },
+        },
+        required: ["chain", "address"],
+      },
+    },
   ],
 }));
+
+// Standard proxy storage slots.
+const PROXY_SLOTS = {
+  // EIP-1967
+  impl: "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc",
+  admin: "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103",
+  beacon: "0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50",
+  // EIP-1822 UUPS proxiable
+  eip1822: "0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7",
+};
+
+const ZERO_SLOT = "0x" + "00".repeat(32);
+
+// A storage slot holds a left-padded address in its low 20 bytes.
+function slotToAddress(slot: string | undefined): string | null {
+  if (!slot || typeof slot !== "string") return null;
+  const hex = slot.replace(/^0x/, "").padStart(64, "0");
+  const addr = "0x" + hex.slice(24);
+  return /^0x0{40}$/.test(addr) ? null : addr;
+}
 
 async function fetchExplorer(
   chain: Chain,
@@ -270,6 +303,60 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
         ],
       });
     }
+    case "resolve_proxy": {
+      const { chain, address } = z.object({
+        chain: z.string(), address: z.string(),
+      }).parse(args);
+
+      const readSlot = async (slot: string): Promise<string | undefined> => {
+        const data = await fetchExplorer(chain as Chain, "proxy", "eth_getStorageAt", {
+          address, position: slot, tag: "latest",
+        });
+        if (data.__mock) return undefined;
+        return typeof data.result === "string" ? data.result : undefined;
+      };
+
+      if (isOffline() || !process.env.ETHERSCAN_API_KEY) {
+        return { content: [{ type: "text", text: JSON.stringify({
+          __stub: true,
+          __reason: "offline or no API key; sample EIP-1967 transparent proxy",
+          address,
+          isProxy: true,
+          pattern: "EIP-1967 (transparent)",
+          implementation: "0x000000000000000000000000000000000000bEEF",
+          admin: "0x000000000000000000000000000000000000AdA1",
+          beacon: null,
+        }, null, 2) }] };
+      }
+
+      const [impl, admin, beacon, eip1822] = await Promise.all([
+        readSlot(PROXY_SLOTS.impl),
+        readSlot(PROXY_SLOTS.admin),
+        readSlot(PROXY_SLOTS.beacon),
+        readSlot(PROXY_SLOTS.eip1822),
+      ]);
+
+      const implAddr = slotToAddress(impl) ?? slotToAddress(eip1822);
+      const adminAddr = slotToAddress(admin);
+      const beaconAddr = slotToAddress(beacon);
+
+      let pattern = "not a proxy";
+      if (beaconAddr) pattern = "EIP-1967 (beacon)";
+      else if (slotToAddress(impl) && adminAddr) pattern = "EIP-1967 (transparent)";
+      else if (slotToAddress(impl)) pattern = "EIP-1967 (UUPS)";
+      else if (slotToAddress(eip1822)) pattern = "EIP-1822 (proxiable)";
+
+      return { content: [{ type: "text", text: JSON.stringify({
+        address,
+        isProxy: pattern !== "not a proxy",
+        pattern,
+        implementation: implAddr,
+        admin: adminAddr,
+        beacon: beaconAddr,
+        slots: { impl: impl ?? ZERO_SLOT, admin: admin ?? ZERO_SLOT, beacon: beacon ?? ZERO_SLOT },
+      }, null, 2) }] };
+    }
+
     default:
       throw new Error(`unknown tool: ${name}`);
   }
