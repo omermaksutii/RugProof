@@ -2,6 +2,24 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [0.7.0] — Unreleased
+
+On-chain audit certificate — deploy-ready.
+
+### Added
+
+- **`nft/DEPLOY.md`**: full Berachain deployment runbook for the soulbound
+  `AuditCertificate` (Bepolia testnet 80069 → mainnet 80094, env vars, verify,
+  issuer-key security, end-to-end mint check). The contract, deploy script, and
+  EIP-712 signer were already complete + tested; this makes going live a
+  one-command, ready-to-trigger step (needs only a funded key).
+- **Makefile**: `deploy-cert-testnet` / `deploy-cert-mainnet` targets.
+- `/mint-cert`: documents the deployed-address config (`certificate:` in
+  `.rugproof.yml`) and the local `sign-cert` issuer-signature flow (no backend).
+- Confirmed the TS signer's `abi.encode` digest matches the contract's
+  `keccak256(abi.encode(chainId, address(this), subject, reportHash, ipfsCid,
+  targetName, grade))` byte-for-byte.
+
 ## [0.6.0] — Unreleased
 
 Post-deployment monitoring & bug-bounty submission tooling.

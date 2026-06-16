@@ -13,8 +13,19 @@ Default chain: **Berachain** (the launch ecosystem).
 ## Prerequisites
 
 - A completed `/audit` (with results saved to `rugproof-reports/`)
+- A **deployed `AuditCertificate` contract** — see `nft/DEPLOY.md` for the
+  Berachain runbook. Record its address in `.rugproof.yml`:
+  ```yaml
+  certificate:
+    chain_id: 80094            # Berachain mainnet (Bepolia testnet: 80069)
+    address: "0xDeployedCertAddress"
+  ```
 - Wallet env: `RUGPROOF_SUBJECT_PK` (the subject's signing key) and `RUGPROOF_SUBJECT_ADDR`
-- Issuer signature obtained from Rugproof's signer service (`POST https://api.omermaksutii.github.io/RugProof/v1/issue-cert` with audit JSON; returns issuer sig)
+- An **issuer signature**: produce it locally with the bundled signer (no backend
+  needed) — `node scripts/dist/sign-cert.js --chain-id <id> --cert-address <addr>
+  --subject <user> --report-hash <0x…> --ipfs-cid <Qm…> --target-name <name>
+  --grade <0-6> --signer-key $RUGPROOF_ISSUER_KEY`. Its `signerAddress` must match
+  the contract's configured issuer.
 - IPFS pinning credentials (Pinata / Web3.Storage / Filecoin) if using `--ipfs-pin`
 
 ## Procedure

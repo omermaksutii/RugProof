@@ -1,5 +1,6 @@
 .PHONY: help build build-mcp build-scripts test test-foundry test-nft test-mcp \
         test-scripts test-mcp-unit test-mcp-smoke docs validate-rules bench \
+        deploy-cert-testnet deploy-cert-mainnet \
         sample-cards sample-html demo audit-demo render-card clean fmt
 
 DEFAULT_GOAL := help
@@ -67,6 +68,14 @@ validate-rules: ## Validate every bundled rule pack
 
 bench: build-scripts ## Run the detection benchmark (pass FINDINGS=<dir> for real scores)
 	node scripts/dist/benchmark.js --expected bench/expected.json $(if $(FINDINGS),--findings $(FINDINGS),)
+
+deploy-cert-testnet: ## Deploy AuditCertificate to Berachain Bepolia testnet (needs RUGPROOF_ADMIN/ISSUER + funded key)
+	FOUNDRY_PROFILE=nft forge script nft/script/Deploy.s.sol:Deploy \
+	  --rpc-url https://bepolia.rpc.berachain.com --broadcast --verify
+
+deploy-cert-mainnet: ## Deploy AuditCertificate to Berachain mainnet (run testnet first!)
+	FOUNDRY_PROFILE=nft forge script nft/script/Deploy.s.sol:Deploy \
+	  --rpc-url https://rpc.berachain.com --broadcast --verify
 
 audit-demo: ## Run the bundled exploit PoC against VulnerableVault
 	forge test --match-contract ExploitREENT001 -vv
