@@ -31,6 +31,16 @@ Compute the intersection:
 - Findings that appear in **only one pass** → keep with confidence MEDIUM, flag as single-source.
 - Findings produced by skill-checks that *match the attacker's exploit narrative* → consensus, even if the wording differs.
 
+### Step 3b — Specialist panel (deep mode, optional)
+
+For the highest-stakes audits, escalate consensus from 2 passes to an N-of-M
+panel. Dispatch every specialist relevant to the detected protocol type (per the
+`/audit` dispatch table) **in parallel, each with fresh context**, plus
+`attacker` and `defender`. Require a finding to be surfaced by **≥3 independent
+agents** (or ≥2 for a Critical) before it reaches the HIGH-confidence tier;
+single-agent findings drop to MEDIUM with a single-source flag. This trades cost
+for the strongest false-positive suppression Rugproof offers.
+
 ### Step 4 — Output
 
 ```

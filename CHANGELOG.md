@@ -7,6 +7,17 @@ All notable changes to Rugproof will be documented here. Format: [Keep a Changel
 Hardening pass turning the v0.1 skeleton into a trustworthy, tested tool. See
 `docs/superpowers/specs/2026-06-16-rugproof-v0.2.0-design.md` for the full plan.
 
+### Phase 5 — regression tracking
+
+- New `scripts/src/diff-reports.ts` (`diffReports()` + CLI): diffs two Rugproof
+  report JSONs by finding id → added / fixed / persisting, per-severity counts
+  delta, grade change, and a `regressed` flag (new High/Critical) that exits
+  non-zero so it works as a CI gate. Unit-tested.
+- New `/audit-diff` command driving it (before-vs-after of the same contract;
+  distinct from `/diff-audit`, which compares code against a canonical library).
+- `/audit-strict` gains an optional N-of-M specialist-panel consensus tier for
+  the strongest false-positive suppression. Commands 43 → 44.
+
 ### Phase 4 — DX & docs
 
 - `scripts/generate-docs.mjs`: generates the docs-site reference pages

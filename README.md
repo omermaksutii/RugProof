@@ -3,7 +3,7 @@
 > Rugproof your code before someone else does.
 
 🌐 **Live site:** [omermaksutii.github.io/RugProof](https://omermaksutii.github.io/RugProof/)
-📦 **Latest:** v0.2.0 — 43 commands · 23 agents · 42 skills · 11 MCP servers, now with a real test suite and offline-first integrations
+📦 **Latest:** v0.2.0 — 44 commands · 23 agents · 42 skills · 11 MCP servers, now with a real test suite and offline-first integrations
 
 A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, working exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, soulbound on-chain audit certificates, and shareable audit cards — Solidity + Vyper across every major EVM chain.
 
@@ -53,14 +53,14 @@ make audit-demo  # runs the bundled reentrancy exploit (passes)
 
 ## What's in the box
 
-### 43 slash commands
+### 44 slash commands
 
 **Audit:** `/audit` `/audit-deep` `/audit-strict` `/audit-changes` `/audit-live` `/audit-history` `/audit-deps` `/audit-multi-chain` `/quick-scan` `/rug-check` `/score` `/explain`
 **Output:** `/report` `/card` `/remediate`
 **Exploit:** `/exploit` `/exploit-chain` `/exploit-live`
 **Simulation:** `/simulate` `/replay-incident`
 **Tests / proofs:** `/test-gen` `/invariant` `/fuzz` `/coverage` `/symbolic` `/prover`
-**Analysis:** `/gas` `/upgrade-safety` `/verify-deploy` `/diff-audit` `/pre-deploy`
+**Analysis:** `/gas` `/upgrade-safety` `/verify-deploy` `/diff-audit` `/audit-diff` `/pre-deploy`
 **Tooling integration:** `/slither` `/mythril`
 **Workflow:** `/rugproof-init` `/dismiss` `/verify-finding` `/bounty` `/bounty-submit` `/demo`
 **Notifications:** `/notify-slack` `/notify-discord` `/tweet`
@@ -145,7 +145,7 @@ The site is built from the `docs/` folder via the GitHub Pages workflow at `.git
 RugProof/
 ├── .claude-plugin/plugin.json        # marketplace manifest + MCP/hook wiring
 ├── .github/                          # workflows (pages, pr-audit, release) + action + templates
-├── commands/                         # 43 slash commands (real prompts)
+├── commands/                         # 44 slash commands (real prompts)
 ├── agents/                           # 23 subagents
 ├── skills/                           # 42 auto-invoked detection skills
 ├── mcp/                              # 11 MCP servers (TypeScript)

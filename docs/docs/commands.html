@@ -33,7 +33,7 @@
 <main class="doc">
   <div class="eyebrow" style="margin-bottom: 16px;">/docs/commands</div>
   <h1>Slash <span style="font-style:italic;color:var(--honey)">commands.</span></h1>
-  <p>All 43 Rugproof commands, generated from source.</p>
+  <p>All 44 Rugproof commands, generated from source.</p>
   <h2>Which command?</h2>
   <pre class="tree">I want to…
 ├─ audit my whole repo ............... /audit            (deep: /audit-deep, paranoid: /audit-strict)
@@ -56,6 +56,7 @@
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-changes.md"><code>/audit-changes</code></a></td><td><code>[base-branch]  (default: main)</code></td><td>Audit only the git diff vs main (or specified base). Optimized for PR review.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-deep.md"><code>/audit-deep</code></a></td><td><code>[file-or-dir]</code></td><td>Deep audit — same as /audit but spawns more parallel subagents, runs multi-pass review, and chases exploit chains across files.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-deps.md"><code>/audit-deps</code></a></td><td><code>[file-or-dir]</code></td><td>Audit third-party dependencies — resolve installed versions, cross-reference known-vulnerable releases, and flag vendored code that has diverged from upstream.</td></tr>
+      <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-diff.md"><code>/audit-diff</code></a></td><td><code>&lt;old-report.json&gt; &lt;new-report.json&gt;</code></td><td>Diff two Rugproof audit reports (before vs after) to track regressions — what's new, what's fixed, and whether the grade moved.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-history.md"><code>/audit-history</code></a></td><td><code>&lt;address-or-protocol-name&gt;</code></td><td>Pull past public audits (Code4rena, Sherlock, Spearbit, etc.) for a deployed contract or known protocol.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-live.md"><code>/audit-live</code></a></td><td><code>&lt;address&gt; [--chain ethereum] [--block latest]</code></td><td>Audit a deployed contract on a live chain. Pulls verified source from the block explorer, optionally forks the chain for live-state simulation.</td></tr>
       <tr><td><a href="https://github.com/omermaksutii/RugProof/blob/main/commands/audit-multi-chain.md"><code>/audit-multi-chain</code></a></td><td><code>&lt;address&gt; &lt;chain1,chain2,...&gt;</code></td><td>Diff the on-chain configuration of one contract deployed across multiple chains — owner, oracle, fees, timelock, pause state, proxy impl — and flag the chain that drifted.</td></tr>
