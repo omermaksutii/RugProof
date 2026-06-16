@@ -2,6 +2,24 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [0.4.0] — Unreleased
+
+Specialist depth, community rule packs, and an honest accuracy benchmark.
+
+### Added
+
+- **Rule-pack tooling**: `scripts/validate-rule-pack.mjs` validates a pack's
+  `pack.yml` against its `skills/<rule>/SKILL.md` files (required metadata, every
+  listed rule resolves, frontmatter name matches). CI validates all bundled packs;
+  `make validate-rules`.
+- **2 real bundled rule packs**: `solady-gotchas` (SafeTransferLib no-contract
+  check, guarded-initializer front-run, gas-optimized ERC20 assumptions) and
+  `uniswap-v4-hooks` (permission-flag mismatch, unlock-reentrancy, delta
+  settlement) — beyond the prior template-only example.
+- **Benchmark harness** (`scripts/src/benchmark.ts` + `bench/expected.json`):
+  scores audit output against a labeled corpus → per-target and aggregate
+  recall / precision / F1. Unit-tested; `make bench`; CI self-check.
+
 ## [0.3.0] — Unreleased
 
 Exploit-pipeline & live-audit depth, plus maintenance — the march toward 1.0.

@@ -71,6 +71,18 @@ jobs:
             docs/docs/agents.html docs/docs/mcp-reference.html \
             || { echo "::error::reference docs are stale — run 'make docs' and commit"; exit 1; }
 
+      - name: Validate bundled rule packs
+        run: |
+          for p in rules/*/; do
+            [ -f "$p/pack.yml" ] && node scripts/validate-rule-pack.mjs "$p" || true
+          done
+          for p in rules/*/; do
+            if [ -f "$p/pack.yml" ]; then node scripts/validate-rule-pack.mjs "$p" || exit 1; fi
+          done
+
+      - name: Benchmark harness self-check
+        run: node scripts/dist/benchmark.js --expected bench/expected.json >/dev/null
+
   live-analyzers:
     name: Live static-analyzer runners
     runs-on: ubuntu-latest

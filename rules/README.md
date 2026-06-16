@@ -39,6 +39,26 @@ rules:
 
 A rule is just a Rugproof skill with frontmatter + detection guidance. See `community-pack-example/skills/example-fork-detection/SKILL.md` for a template.
 
+## Validating a pack
+
+Before publishing, check that every rule listed in `pack.yml` resolves to a
+`skills/<rule>/SKILL.md` whose frontmatter `name` matches:
+
+```bash
+node scripts/validate-rule-pack.mjs rules/<your-pack>
+```
+
+It fails (non-zero) on missing required metadata, a listed rule without a skill
+file, or a name mismatch, and warns about skill dirs not registered in `pack.yml`.
+
+## Bundled packs
+
+- `community-pack-example/` — copy this to start your own.
+- `solady-gotchas/` — Solady-specific footguns (SafeTransferLib no-contract-check,
+  guarded-initializer front-run, gas-optimized ERC20 assumptions).
+- `uniswap-v4-hooks/` — Uniswap V4 hook footgun catalog (permission-flag
+  mismatch, unlock-reentrancy, delta settlement).
+
 ## Curation
 
 Rugproof maintains a curated index at https://omermaksutii.github.io/RugProof/rules. Submit your pack via PR to https://github.com/omermaksutii/RugProof-rules-index. Curated packs:
