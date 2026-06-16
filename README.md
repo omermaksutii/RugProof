@@ -3,7 +3,7 @@
 > Rugproof your code before someone else does.
 
 🌐 **Live site:** [omermaksutii.github.io/RugProof](https://omermaksutii.github.io/RugProof/)
-📦 **Latest:** v0.6.0 — 45 commands · 23 agents · 45 skills · 13 MCP servers · tested, offline-first, with rule packs, a benchmark, non-EVM coverage, and post-deploy monitoring
+📦 **Latest:** v1.0.0 — 45 commands · 23 agents · 45 skills · 13 MCP servers · tested, offline-first, with rule packs, a benchmark, non-EVM coverage, and post-deploy monitoring
 
 A Claude Code plugin that turns your editor into a full-stack smart contract security auditor: vulnerability detection, working exploit PoCs, mainnet-fork simulation, invariant generation, gas profiling, soulbound on-chain audit certificates, and shareable audit cards — Solidity + Vyper across every major EVM chain.
 
@@ -191,17 +191,24 @@ The plugin.json points to `mcp/<name>-mcp/dist/index.js` for each server. Most r
 
 ## Roadmap
 
-v0.1 shipped the full skeleton; **v0.2 hardens it into a tested, real-integration tool**.
+v0.1 shipped the full skeleton; the **0.2 → 1.0 arc** hardened it into a tested,
+real-integration, launch-ready tool.
 
-| Phase | Scope | Status |
+| Version | Scope | Status |
 |------:|:------|:------|
-| 0.1.0 | Full skeleton: every command · agent · skill · MCP · hook · template · demo contract · NFT cert · Action · Pages site | ✅ shipped |
-| 0.2.0 — bug-fixes | MCP fragility fixes (anvil readiness, hardhat hang, case-insensitive quirks, robust history parsing), version reconcile | ✅ done |
-| 0.2.0 — tests/CI | Unit + integration suites (parsers, EIP-712 signer, all 11 MCPs), e2e report pipeline, lint + secret-scan + version-sync gates, published findings schema | ✅ done |
-| 0.2.0 — MCP depth | Etherscan v2 multichain, GoPlus token-safety, `slither-runner` + `mythril-runner` MCPs, shared retry/backoff client — all offline-first | ✅ done |
-| 0.2.0 — breadth | 4 specialists (Vyper, L2/sequencer, economic-rug, ZK-verifier) · 8 skills · 5 commands · formalized dispatch | ✅ done |
-| 0.2.0 — docs | Source-generated command/skill/agent/MCP reference, config + troubleshooting + telemetry guides | ✅ done |
-| next | Wire `/exploit` end-to-end against real forks · community rule packs · dynamic audit gallery · bug-bounty submission API · on-chain certificate live on Berachain mainnet |  planned |
+| 0.1.0 | Full skeleton: every command · agent · skill · MCP · hook · template · demo · NFT cert · Action · Pages site | ✅ |
+| 0.2.0 | Bug-fixes + real test suites + CI gates + Etherscan v2 / GoPlus / Slither / Mythril MCPs + 4 specialists / 8 skills / 5 commands + source-generated docs | ✅ |
+| 0.3.0 | EIP-1967/1822 proxy resolver · live-analyzer CI · dependency maintenance | ✅ |
+| 0.4.0 | Rule-pack validator + 2 real packs · accuracy benchmark harness | ✅ |
+| 0.5.0 | `fuzz-runner` MCP (Echidna/Medusa/Halmos) · non-EVM skills (Stylus/CosmWasm/Solana) | ✅ |
+| 0.6.0 | Monitoring MCP + `/monitor` · Immunefi bounty formatter | ✅ |
+| 0.7.0 | On-chain certificate deploy-readiness (Berachain runbook + targets) | ✅ |
+| 0.8.0 | Source-driven public audit gallery | ✅ |
+| 0.9.0 | Incremental cache · MCP-boundary input safety · `_shared` tests | ✅ |
+| **1.0.0** | **Launch: frozen findings schema + semver commitment + owner-gated handoff (`LAUNCH.md`)** | ✅ |
+
+**Shipping to users** is the only remaining work, and it's external (marketplace
+submission, mainnet cert deploy, API keys, hosting) — see [`LAUNCH.md`](LAUNCH.md).
 
 ## License
 

@@ -2,7 +2,33 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
-## [0.9.0] — Unreleased
+## [1.0.0] — 2026-06-17
+
+**Launch release.** The codebase is feature-complete, tested, documented, and
+offline-first. Remaining steps to ship to users are external (keys, funds,
+hosting, marketplace submission) — see `LAUNCH.md`.
+
+### Stability
+
+- **Findings JSON schema frozen** for the 1.x line (`schemas/finding.schema.json`);
+  semver commitment documented at `docs/docs/stability.html` — no breaking changes
+  to command names, the findings shape, or MCP tool signatures within 1.x.
+- `LAUNCH.md` enumerates the owner-gated launch steps, each wired to a single trigger.
+
+### Since 0.1.0 (the 0.2→0.9 hardening arc)
+
+- **Trust**: real test suites (Foundry, NFT, 36 script unit tests, all 13 MCP
+  servers, e2e report pipeline, rule-pack validation, accuracy benchmark) + CI
+  gates (lint, secret scan, version-sync, docs/gallery drift).
+- **Depth**: Etherscan v2 multichain + proxy resolution, GoPlus token-safety,
+  Slither/Mythril/Echidna/Medusa/Halmos runner MCPs, monitoring MCP — all
+  offline-first. 9 → 13 MCP servers.
+- **Breadth**: 19 → 23 agents, 33 → 45 skills (incl. non-EVM: Stylus/CosmWasm/
+  Solana-Anchor), 38 → 45 commands, 2 real rule packs.
+- **DX**: source-generated reference docs + audit gallery, config/troubleshooting/
+  telemetry/stability guides, on-chain certificate deploy runbook.
+
+## [0.9.0] — 2026-06-16
 
 Beta hardening: incremental caching, MCP-boundary input safety, shared-module tests.
 
@@ -20,7 +46,7 @@ Beta hardening: incremental caching, MCP-boundary input safety, shared-module te
 - **SECURITY.md**: documented Rugproof's own posture (no-shell spawn, offline-first
   no-exfiltration, bounded output, tested boundary + gitleaks).
 
-## [0.8.0] — Unreleased
+## [0.8.0] — 2026-06-16
 
 Source-driven public audit gallery.
 
@@ -33,7 +59,7 @@ Source-driven public audit gallery.
   backend. Self-contained card styling (grade badges, finding counts).
 - CI gates the gallery against drift (like the reference docs); `make gallery`.
 
-## [0.7.0] — Unreleased
+## [0.7.0] — 2026-06-16
 
 On-chain audit certificate — deploy-ready.
 
@@ -51,7 +77,7 @@ On-chain audit certificate — deploy-ready.
   `keccak256(abi.encode(chainId, address(this), subject, reportHash, ipfsCid,
   targetName, grade))` byte-for-byte.
 
-## [0.6.0] — Unreleased
+## [0.6.0] — 2026-06-16
 
 Post-deployment monitoring & bug-bounty submission tooling.
 
@@ -68,7 +94,7 @@ Post-deployment monitoring & bug-bounty submission tooling.
   + Markdown; unit-tested and wired into `/bounty-submit` (the POST still needs
   `IMMUNEFI_API_KEY` — ready to trigger).
 
-## [0.5.0] — Unreleased
+## [0.5.0] — 2026-06-16
 
 Multi-language coverage & the property-fuzzing / symbolic toolchain.
 
@@ -84,7 +110,7 @@ Multi-language coverage & the property-fuzzing / symbolic toolchain.
 - README "Languages" updated: Stylus/CosmWasm/Solana-Anchor now have dedicated
   skills (not just "top vuln classes").
 
-## [0.4.0] — Unreleased
+## [0.4.0] — 2026-06-16
 
 Specialist depth, community rule packs, and an honest accuracy benchmark.
 
@@ -102,7 +128,7 @@ Specialist depth, community rule packs, and an honest accuracy benchmark.
   scores audit output against a labeled corpus → per-target and aggregate
   recall / precision / F1. Unit-tested; `make bench`; CI self-check.
 
-## [0.3.0] — Unreleased
+## [0.3.0] — 2026-06-16
 
 Exploit-pipeline & live-audit depth, plus maintenance — the march toward 1.0.
 
