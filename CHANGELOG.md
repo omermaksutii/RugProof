@@ -2,6 +2,24 @@
 
 All notable changes to Rugproof will be documented here. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
+## [0.9.0] — Unreleased
+
+Beta hardening: incremental caching, MCP-boundary input safety, shared-module tests.
+
+### Added / Changed
+
+- **`@rugproof/mcp-shared`** gains: `assertSafeArg` (rejects NUL/newline/overlong
+  values before they reach `spawn`), `hashKey` (sha256 content key), and a TTL
+  file cache (`readCache`/`writeCache`).
+- **Incremental analysis**: `slither-runner` now caches results keyed on the
+  target file's contents + flags, so re-analyzing unchanged source is instant.
+- **Input safety** applied across the `slither` / `mythril` / `fuzz` runners
+  (`target` / `cwd` / `args` validated).
+- **First `_shared` test suite** (`mcp/test/shared.test.mjs`): stub envelope,
+  input validation, hash stability, cache round-trip/expiry. MCP tests 15 → 21.
+- **SECURITY.md**: documented Rugproof's own posture (no-shell spawn, offline-first
+  no-exfiltration, bounded output, tested boundary + gitleaks).
+
 ## [0.8.0] — Unreleased
 
 Source-driven public audit gallery.

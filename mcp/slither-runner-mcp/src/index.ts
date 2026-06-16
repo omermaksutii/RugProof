@@ -15,7 +15,10 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { spawn } from "node:child_process";
-import { textResult, stub, hasBinary, isOffline } from "@rugproof/mcp-shared";
+import { readFile } from "node:fs/promises";
+import { textResult, stub, hasBinary, isOffline, assertSafeArg, hashKey, readCache, writeCache } from "@rugproof/mcp-shared";
+
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1h — re-analysis of unchanged source is skipped
 
 const SLITHER = process.env.SLITHER_PATH ?? "slither";
 
@@ -113,10 +116,23 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       cwd: z.string().optional(),
       args: z.array(z.string()).optional(),
     }).parse(args);
+    assertSafeArg(target, "target");
+    if (cwd) assertSafeArg(cwd, "cwd");
+    (extra ?? []).forEach((a, i) => assertSafeArg(a, `args[${i}]`));
 
     if (isOffline() || !(await hasBinary(SLITHER))) {
       return stub("slither not installed or offline; returning representative sample", { slither: SAMPLE });
     }
+
+    // Incremental: if the target is a single readable file, key the cache on its
+    // contents + flags so re-analyzing unchanged source is instant.
+    let cacheKey: string | null = null;
+    try {
+      const src = await readFile(target, "utf-8");
+      cacheKey = hashKey("slither", src, JSON.stringify(extra ?? []));
+      const cached = await readCache<any>(cacheKey, CACHE_TTL_MS);
+      if (cached) return textResult({ stub: false, cached: true, slither: cached });
+    } catch { /* not a single file — skip caching */ }
 
     const r = await runSlither(target, extra ?? [], cwd);
     // Slither exits non-zero when it finds issues, but still emits JSON on stdout.
@@ -128,6 +144,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
         stderr: r.stderr.slice(0, 2000),
       });
     }
+    if (cacheKey) await writeCache(cacheKey, parsed);
     return textResult({ stub: false, code: r.code, slither: parsed });
   }
 
